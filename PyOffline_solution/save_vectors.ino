@@ -1,24 +1,115 @@
-#include <iostream>
 #include <vector>
 using namespace std;
 
 struct Tree{
-    uint8_t child_id_left, child_id_right;
-    int feature;
-    uint8_t n_samples;
+    int child_id_left, child_id_right, feature, n_samples;
     float threshold;
 };
 
-std::ostream& operator<<(std::ostream& stream, const Tree& forest){
+vector<vector<Tree>> iForest;
+std::vector<Tree> iTree1;
+std::vector<Tree> iTree2;
+std::vector<Tree> iTree3;
+std::vector<Tree> iTree4;
+std::vector<Tree> iTree5;
+std::vector<Tree> iTree6;
+std::vector<Tree> iTree7;
+std::vector<Tree> iTree8;
+std::vector<Tree> iTree9;
+std::vector<Tree> iTree10;
+std::vector<Tree> iTree11;
+std::vector<Tree> iTree12;
+std::vector<Tree> iTree13;
+std::vector<Tree> iTree14;
+std::vector<Tree> iTree15;
+std::vector<Tree> iTree16;
+std::vector<Tree> iTree17;
+std::vector<Tree> iTree18;
+std::vector<Tree> iTree19;
+std::vector<Tree> iTree20;
+std::vector<Tree> iTree21;
+std::vector<Tree> iTree22;
+std::vector<Tree> iTree23;
+std::vector<Tree> iTree24;
+std::vector<Tree> iTree25;
+std::vector<Tree> iTree26;
+std::vector<Tree> iTree27;
+std::vector<Tree> iTree28;
+std::vector<Tree> iTree29;
+std::vector<Tree> iTree30;
+std::vector<Tree> iTree31;
+std::vector<Tree> iTree32;
+std::vector<Tree> iTree33;
+std::vector<Tree> iTree34;
+std::vector<Tree> iTree35;
+std::vector<Tree> iTree36;
+std::vector<Tree> iTree37;
+std::vector<Tree> iTree38;
+std::vector<Tree> iTree39;
+std::vector<Tree> iTree40;
+std::vector<Tree> iTree41;
+std::vector<Tree> iTree42;
+std::vector<Tree> iTree43;
+std::vector<Tree> iTree44;
+std::vector<Tree> iTree45;
+std::vector<Tree> iTree46;
+std::vector<Tree> iTree47;
+std::vector<Tree> iTree48;
+std::vector<Tree> iTree49;
+std::vector<Tree> iTree50;
+std::vector<Tree> iTree51;
+std::vector<Tree> iTree52;
+std::vector<Tree> iTree53;
+std::vector<Tree> iTree54;
+std::vector<Tree> iTree55;
+std::vector<Tree> iTree56;
+std::vector<Tree> iTree57;
+std::vector<Tree> iTree58;
+std::vector<Tree> iTree59;
+std::vector<Tree> iTree60;
+std::vector<Tree> iTree61;
+std::vector<Tree> iTree62;
+std::vector<Tree> iTree63;
+std::vector<Tree> iTree64;
+std::vector<Tree> iTree65;
+std::vector<Tree> iTree66;
+std::vector<Tree> iTree67;
+std::vector<Tree> iTree68;
+std::vector<Tree> iTree69;
+std::vector<Tree> iTree70;
+std::vector<Tree> iTree71;
+std::vector<Tree> iTree72;
+std::vector<Tree> iTree73;
+std::vector<Tree> iTree74;
+std::vector<Tree> iTree75;
+std::vector<Tree> iTree76;
+std::vector<Tree> iTree77;
+std::vector<Tree> iTree78;
+std::vector<Tree> iTree79;
+std::vector<Tree> iTree80;
+std::vector<Tree> iTree81;
+std::vector<Tree> iTree82;
+std::vector<Tree> iTree83;
+std::vector<Tree> iTree84;
+std::vector<Tree> iTree85;
+std::vector<Tree> iTree86;
+std::vector<Tree> iTree87;
+std::vector<Tree> iTree88;
+std::vector<Tree> iTree89;
+std::vector<Tree> iTree90;
+std::vector<Tree> iTree91;
+std::vector<Tree> iTree92;
+std::vector<Tree> iTree93;
+std::vector<Tree> iTree94;
+std::vector<Tree> iTree95;
+std::vector<Tree> iTree96;
+std::vector<Tree> iTree97;
+std::vector<Tree> iTree98;
+std::vector<Tree> iTree99;
+std::vector<Tree> iTree100;
 
-    stream << "Left child:" << forest.child_id_left << " Right child:" << forest.child_id_right << " Samples left:" << forest.feature << " Feature:"  << forest.n_samples << " Threshold:"  << forest.threshold << " ";
-    return stream;
-
-}
-
-int main(){
-    vector<vector<Tree>> iForest;
-    std::vector<Tree> iTree1;
+void setup() {
+    Serial.begin(9600);
     iTree1.push_back({1, 2, 4, 129, 72.02171203215686});
     iTree1.push_back({0, 0, -2, 1, -2.0});
     iTree1.push_back({3, 36, 12, 128, 1088.404219455274});
@@ -68,7 +159,6 @@ int main(){
     iTree1.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree1);
 
-    std::vector<Tree> iTree2;
     iTree2.push_back({1, 42, 10, 129, 0.6462193910220053});
     iTree2.push_back({2, 5, 6, 21, 0.5450415043262371});
     iTree2.push_back({3, 4, 1, 2, 4.202842092961063});
@@ -212,7 +302,6 @@ int main(){
     iTree2.push_back({0, 0, -2, 3, -2.0});
     iForest.push_back(iTree2);
 
-    std::vector<Tree> iTree3;
     iTree3.push_back({1, 2, 4, 129, 72.2669500421113});
     iTree3.push_back({0, 0, -2, 1, -2.0});
     iTree3.push_back({3, 84, 7, 128, 0.6170814906606272});
@@ -308,7 +397,6 @@ int main(){
     iTree3.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree3);
 
-    std::vector<Tree> iTree4;
     iTree4.push_back({1, 100, 1, 129, 2.2523897589915203});
     iTree4.push_back({2, 65, 11, 70, 3.081593348213575});
     iTree4.push_back({3, 30, 1, 50, 1.598659428345621});
@@ -468,7 +556,6 @@ int main(){
     iTree4.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree4);
 
-    std::vector<Tree> iTree5;
     iTree5.push_back({1, 100, 2, 129, 2.4556918180294476});
     iTree5.push_back({2, 67, 12, 87, 686.15935784772});
     iTree5.push_back({3, 46, 6, 66, 2.2953395391635247});
@@ -612,7 +699,6 @@ int main(){
     iTree5.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree5);
 
-    std::vector<Tree> iTree6;
     iTree6.push_back({1, 58, 10, 129, 1.6225397458575954});
     iTree6.push_back({2, 47, 8, 128, 2.5746962820122925});
     iTree6.push_back({3, 46, 6, 122, 4.107480801455082});
@@ -674,7 +760,6 @@ int main(){
     iTree6.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree6);
 
-    std::vector<Tree> iTree7;
     iTree7.push_back({1, 56, 6, 129, 4.575350930996428});
     iTree7.push_back({2, 25, 2, 128, 2.0443043126902865});
     iTree7.push_back({3, 8, 12, 20, 377.467816674834});
@@ -734,7 +819,6 @@ int main(){
     iTree7.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree7);
 
-    std::vector<Tree> iTree8;
     iTree8.push_back({1, 40, 2, 129, 2.2940766471945775});
     iTree8.push_back({2, 5, 5, 54, 1.1676943262359982});
     iTree8.push_back({3, 4, 9, 2, 3.729279710131897});
@@ -840,7 +924,6 @@ int main(){
     iTree8.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree8);
 
-    std::vector<Tree> iTree9;
     iTree9.push_back({1, 72, 2, 129, 3.179021498486337});
     iTree9.push_back({2, 71, 10, 128, 1.59641410417098});
     iTree9.push_back({3, 48, 3, 127, 23.555125777750078});
@@ -916,7 +999,6 @@ int main(){
     iTree9.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree9);
 
-    std::vector<Tree> iTree10;
     iTree10.push_back({1, 106, 12, 129, 898.4860728143184});
     iTree10.push_back({2, 79, 1, 117, 3.9953574354370103});
     iTree10.push_back({3, 38, 1, 101, 1.8419491353191828});
@@ -1048,7 +1130,6 @@ int main(){
     iTree10.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree10);
 
-    std::vector<Tree> iTree11;
     iTree11.push_back({1, 82, 1, 129, 5.584397834150271});
     iTree11.push_back({2, 43, 7, 127, 0.5298759981422979});
     iTree11.push_back({3, 42, 3, 104, 29.348029117509107});
@@ -1136,7 +1217,6 @@ int main(){
     iTree11.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree11);
 
-    std::vector<Tree> iTree12;
     iTree12.push_back({1, 56, 7, 129, 0.32514221188242437});
     iTree12.push_back({2, 55, 4, 46, 151.90140171623852});
     iTree12.push_back({3, 54, 3, 45, 26.91238003247078});
@@ -1298,7 +1378,6 @@ int main(){
     iTree12.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree12);
 
-    std::vector<Tree> iTree13;
     iTree13.push_back({1, 88, 12, 129, 1264.5420286928033});
     iTree13.push_back({2, 53, 4, 124, 105.93527220745351});
     iTree13.push_back({3, 42, 8, 99, 2.3040446722212575});
@@ -1398,7 +1477,6 @@ int main(){
     iTree13.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree13);
 
-    std::vector<Tree> iTree14;
     iTree14.push_back({1, 66, 8, 129, 3.2888057155271833});
     iTree14.push_back({2, 61, 1, 128, 5.375536365711021});
     iTree14.push_back({3, 48, 0, 125, 13.955896492808535});
@@ -1468,7 +1546,6 @@ int main(){
     iTree14.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree14);
 
-    std::vector<Tree> iTree15;
     iTree15.push_back({1, 48, 9, 129, 9.024693824604554});
     iTree15.push_back({2, 39, 4, 116, 123.40922723962424});
     iTree15.push_back({3, 28, 4, 111, 117.96864046667173});
@@ -1544,7 +1621,6 @@ int main(){
     iTree15.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree15);
 
-    std::vector<Tree> iTree16;
     iTree16.push_back({1, 26, 10, 129, 0.5907255479503918});
     iTree16.push_back({2, 7, 6, 14, 0.647155732436933});
     iTree16.push_back({3, 6, 4, 3, 94.80980786998282});
@@ -1682,7 +1758,6 @@ int main(){
     iTree16.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree16);
 
-    std::vector<Tree> iTree17;
     iTree17.push_back({1, 72, 9, 129, 9.37003006176118});
     iTree17.push_back({2, 71, 4, 118, 161.9822719469584});
     iTree17.push_back({3, 38, 11, 117, 2.3748466117892884});
@@ -1778,7 +1853,6 @@ int main(){
     iTree17.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree17);
 
-    std::vector<Tree> iTree18;
     iTree18.push_back({1, 68, 0, 129, 13.884939187564136});
     iTree18.push_back({2, 67, 7, 121, 0.6503536686342754});
     iTree18.push_back({3, 38, 10, 120, 1.149938400279737});
@@ -1864,7 +1938,6 @@ int main(){
     iTree18.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree18);
 
-    std::vector<Tree> iTree19;
     iTree19.push_back({1, 104, 10, 129, 1.233012847281111});
     iTree19.push_back({2, 63, 9, 117, 5.456853817847213});
     iTree19.push_back({3, 30, 5, 73, 1.642536677864578});
@@ -1994,7 +2067,6 @@ int main(){
     iTree19.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree19);
 
-    std::vector<Tree> iTree20;
     iTree20.push_back({1, 56, 12, 129, 1123.331887495393});
     iTree20.push_back({2, 23, 6, 124, 0.6542860421359725});
     iTree20.push_back({3, 6, 5, 21, 1.264303495119196});
@@ -2062,7 +2134,6 @@ int main(){
     iTree20.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree20);
 
-    std::vector<Tree> iTree21;
     iTree21.push_back({1, 62, 5, 129, 2.20590501591007});
     iTree21.push_back({2, 13, 12, 83, 414.0087484959554});
     iTree21.push_back({3, 10, 2, 6, 2.3224391224881664});
@@ -2198,7 +2269,6 @@ int main(){
     iTree21.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree21);
 
-    std::vector<Tree> iTree22;
     iTree22.push_back({1, 62, 4, 129, 99.8193960216918});
     iTree22.push_back({2, 61, 7, 83, 0.6535927407664057});
     iTree22.push_back({3, 32, 6, 82, 1.5711946366253768});
@@ -2300,7 +2370,6 @@ int main(){
     iTree22.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree22);
 
-    std::vector<Tree> iTree23;
     iTree23.push_back({1, 74, 4, 129, 128.83405696732646});
     iTree23.push_back({2, 3, 2, 124, 1.5037634640191695});
     iTree23.push_back({0, 0, -2, 1, -2.0});
@@ -2386,7 +2455,6 @@ int main(){
     iTree23.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree23);
 
-    std::vector<Tree> iTree24;
     iTree24.push_back({1, 54, 12, 129, 617.8080271202177});
     iTree24.push_back({2, 3, 5, 73, 1.0502272221486812});
     iTree24.push_back({0, 0, -2, 1, -2.0});
@@ -2496,7 +2564,6 @@ int main(){
     iTree24.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree24);
 
-    std::vector<Tree> iTree25;
     iTree25.push_back({1, 2, 4, 129, 74.86694981756943});
     iTree25.push_back({0, 0, -2, 1, -2.0});
     iTree25.push_back({3, 52, 3, 128, 25.283245544720778});
@@ -2564,7 +2631,6 @@ int main(){
     iTree25.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree25);
 
-    std::vector<Tree> iTree26;
     iTree26.push_back({1, 114, 4, 129, 161.10544512192973});
     iTree26.push_back({2, 73, 7, 128, 0.4561589045295456});
     iTree26.push_back({3, 30, 5, 89, 1.544778623147661});
@@ -2682,7 +2748,6 @@ int main(){
     iTree26.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree26);
 
-    std::vector<Tree> iTree27;
     iTree27.push_back({1, 70, 1, 129, 2.1885564387330128});
     iTree27.push_back({2, 51, 10, 70, 1.1990575846883638});
     iTree27.push_back({3, 32, 5, 53, 2.850833509841218});
@@ -2814,7 +2879,6 @@ int main(){
     iTree27.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree27);
 
-    std::vector<Tree> iTree28;
     iTree28.push_back({1, 62, 3, 129, 27.960041876091136});
     iTree28.push_back({2, 39, 4, 126, 107.06480599989408});
     iTree28.push_back({3, 34, 10, 104, 1.4011327639872966});
@@ -2884,7 +2948,6 @@ int main(){
     iTree28.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree28);
 
-    std::vector<Tree> iTree29;
     iTree29.push_back({1, 6, 5, 129, 1.2286777602919987});
     iTree29.push_back({2, 3, 1, 3, 2.241486475110842});
     iTree29.push_back({0, 0, -2, 1, -2.0});
@@ -2958,7 +3021,6 @@ int main(){
     iTree29.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree29);
 
-    std::vector<Tree> iTree30;
     iTree30.push_back({1, 36, 12, 129, 428.6879746237248});
     iTree30.push_back({2, 9, 7, 26, 0.23479274525969637});
     iTree30.push_back({3, 4, 1, 4, 1.2791654427002737});
@@ -3084,7 +3146,6 @@ int main(){
     iTree30.push_back({0, 0, -2, 2, -2.0});
     iForest.push_back(iTree30);
 
-    std::vector<Tree> iTree31;
     iTree31.push_back({1, 8, 3, 129, 15.902244246381068});
     iTree31.push_back({2, 3, 8, 4, 1.0075027185658536});
     iTree31.push_back({0, 0, -2, 1, -2.0});
@@ -3138,7 +3199,6 @@ int main(){
     iTree31.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree31);
 
-    std::vector<Tree> iTree32;
     iTree32.push_back({1, 88, 2, 129, 3.0188469082548215});
     iTree32.push_back({2, 57, 7, 128, 0.5016145667251166});
     iTree32.push_back({3, 20, 8, 100, 1.6212378416136077});
@@ -3230,7 +3290,6 @@ int main(){
     iTree32.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree32);
 
-    std::vector<Tree> iTree33;
     iTree33.push_back({1, 8, 1, 129, 0.9345629513527655});
     iTree33.push_back({2, 5, 2, 4, 2.446905909224262});
     iTree33.push_back({3, 4, 2, 2, 1.922708568394281});
@@ -3288,7 +3347,6 @@ int main(){
     iTree33.push_back({0, 0, -2, 8, -2.0});
     iForest.push_back(iTree33);
 
-    std::vector<Tree> iTree34;
     iTree34.push_back({1, 88, 5, 129, 3.2427632325348417});
     iTree34.push_back({2, 69, 1, 124, 4.39448162097877});
     iTree34.push_back({3, 46, 5, 114, 1.8229767560259615});
@@ -3388,7 +3446,6 @@ int main(){
     iTree34.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree34);
 
-    std::vector<Tree> iTree35;
     iTree35.push_back({1, 80, 3, 129, 22.422292670982266});
     iTree35.push_back({2, 59, 1, 98, 3.6608683865978855});
     iTree35.push_back({3, 26, 12, 83, 412.9675228441914});
@@ -3512,7 +3569,6 @@ int main(){
     iTree35.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree35);
 
-    std::vector<Tree> iTree36;
     iTree36.push_back({1, 66, 9, 129, 8.039310168378886});
     iTree36.push_back({2, 63, 8, 110, 3.221420102834571});
     iTree36.push_back({3, 34, 12, 108, 694.1785714552639});
@@ -3614,7 +3670,6 @@ int main(){
     iTree36.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree36);
 
-    std::vector<Tree> iTree37;
     iTree37.push_back({1, 56, 5, 129, 1.6908701238613153});
     iTree37.push_back({2, 43, 6, 40, 1.4116525350891507});
     iTree37.push_back({3, 34, 2, 32, 2.542657067776996});
@@ -3748,7 +3803,6 @@ int main(){
     iTree37.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree37);
 
-    std::vector<Tree> iTree38;
     iTree38.push_back({1, 54, 11, 129, 2.0935475148259455});
     iTree38.push_back({2, 53, 9, 51, 12.579532763746561});
     iTree38.push_back({3, 24, 8, 50, 1.246031393009091});
@@ -3868,7 +3922,6 @@ int main(){
     iTree38.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree38);
 
-    std::vector<Tree> iTree39;
     iTree39.push_back({1, 60, 12, 129, 544.1275409767998});
     iTree39.push_back({2, 5, 0, 57, 11.512059629496495});
     iTree39.push_back({3, 4, 5, 2, 2.4718660294964407});
@@ -4016,7 +4069,6 @@ int main(){
     iTree39.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree39);
 
-    std::vector<Tree> iTree40;
     iTree40.push_back({1, 30, 5, 129, 1.4359828497886837});
     iTree40.push_back({2, 5, 2, 16, 2.2251682464507976});
     iTree40.push_back({3, 4, 4, 2, 103.9791535232119});
@@ -4130,7 +4182,6 @@ int main(){
     iTree40.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree40);
 
-    std::vector<Tree> iTree41;
     iTree41.push_back({1, 76, 2, 129, 2.580506281477362});
     iTree41.push_back({2, 3, 3, 103, 13.508466954388307});
     iTree41.push_back({0, 0, -2, 1, -2.0});
@@ -4250,7 +4301,6 @@ int main(){
     iTree41.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree41);
 
-    std::vector<Tree> iTree42;
     iTree42.push_back({1, 4, 9, 129, 1.8528155608548311});
     iTree42.push_back({2, 3, 1, 2, 2.830954557841483});
     iTree42.push_back({0, 0, -2, 1, -2.0});
@@ -4352,7 +4402,6 @@ int main(){
     iTree42.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree42);
 
-    std::vector<Tree> iTree43;
     iTree43.push_back({1, 50, 4, 129, 142.2370073461146});
     iTree43.push_back({2, 45, 6, 127, 3.30665272542107});
     iTree43.push_back({3, 44, 10, 124, 1.6684598657738876});
@@ -4408,7 +4457,6 @@ int main(){
     iTree43.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree43);
 
-    std::vector<Tree> iTree44;
     iTree44.push_back({1, 28, 9, 129, 3.292635333968101});
     iTree44.push_back({2, 27, 12, 48, 914.0585795194183});
     iTree44.push_back({3, 4, 3, 47, 14.391870028225508});
@@ -4526,7 +4574,6 @@ int main(){
     iTree44.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree44);
 
-    std::vector<Tree> iTree45;
     iTree45.push_back({1, 2, 3, 129, 13.833234539583366});
     iTree45.push_back({0, 0, -2, 1, -2.0});
     iTree45.push_back({3, 34, 6, 128, 1.9726073304915999});
@@ -4620,7 +4667,6 @@ int main(){
     iTree45.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree45);
 
-    std::vector<Tree> iTree46;
     iTree46.push_back({1, 82, 8, 129, 2.777231522799969});
     iTree46.push_back({2, 75, 8, 125, 2.465985162932159});
     iTree46.push_back({3, 42, 5, 121, 2.059590905420789});
@@ -4712,7 +4758,6 @@ int main(){
     iTree46.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree46);
 
-    std::vector<Tree> iTree47;
     iTree47.push_back({1, 32, 9, 129, 6.412736238390294});
     iTree47.push_back({2, 31, 10, 98, 1.6180864529402705});
     iTree47.push_back({3, 30, 6, 97, 4.542253456805349});
@@ -4784,7 +4829,6 @@ int main(){
     iTree47.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree47);
 
-    std::vector<Tree> iTree48;
     iTree48.push_back({1, 42, 9, 129, 7.063862943008881});
     iTree48.push_back({2, 41, 2, 100, 3.085810543976835});
     iTree48.push_back({3, 38, 0, 99, 14.216428234108122});
@@ -4872,7 +4916,6 @@ int main(){
     iTree48.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree48);
 
-    std::vector<Tree> iTree49;
     iTree49.push_back({1, 94, 11, 129, 2.5070369261445027});
     iTree49.push_back({2, 57, 11, 70, 2.010400536421845});
     iTree49.push_back({3, 28, 11, 48, 1.5355843548177794});
@@ -5052,7 +5095,6 @@ int main(){
     iTree49.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree49);
 
-    std::vector<Tree> iTree50;
     iTree50.push_back({1, 2, 2, 129, 1.4921429638731056});
     iTree50.push_back({0, 0, -2, 1, -2.0});
     iTree50.push_back({3, 46, 10, 128, 0.7187783755569408});
@@ -5156,7 +5198,6 @@ int main(){
     iTree50.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree50);
 
-    std::vector<Tree> iTree51;
     iTree51.push_back({1, 2, 4, 129, 75.44365313530139});
     iTree51.push_back({0, 0, -2, 1, -2.0});
     iTree51.push_back({3, 46, 11, 128, 2.415772709370323});
@@ -5240,7 +5281,6 @@ int main(){
     iTree51.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree51);
 
-    std::vector<Tree> iTree52;
     iTree52.push_back({1, 92, 0, 129, 13.515611608565184});
     iTree52.push_back({2, 71, 6, 107, 2.586526842955604});
     iTree52.push_back({3, 46, 4, 93, 108.07227917484579});
@@ -5374,7 +5414,6 @@ int main(){
     iTree52.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree52);
 
-    std::vector<Tree> iTree53;
     iTree53.push_back({1, 84, 10, 129, 1.1511937779590462});
     iTree53.push_back({2, 61, 10, 104, 0.9405889068972808});
     iTree53.push_back({3, 44, 7, 70, 0.5305442194899376});
@@ -5510,7 +5549,6 @@ int main(){
     iTree53.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree53);
 
-    std::vector<Tree> iTree54;
     iTree54.push_back({1, 90, 2, 129, 2.771530723544295});
     iTree54.push_back({2, 21, 3, 125, 16.716397126596654});
     iTree54.push_back({3, 4, 0, 11, 12.199526591772637});
@@ -5610,7 +5648,6 @@ int main(){
     iTree54.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree54);
 
-    std::vector<Tree> iTree55;
     iTree55.push_back({1, 48, 9, 129, 9.458347873730526});
     iTree55.push_back({2, 47, 8, 119, 3.3146103166500986});
     iTree55.push_back({3, 46, 2, 118, 3.0393357744045884});
@@ -5680,7 +5717,6 @@ int main(){
     iTree55.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree55);
 
-    std::vector<Tree> iTree56;
     iTree56.push_back({1, 98, 4, 129, 123.71442447310054});
     iTree56.push_back({2, 53, 8, 124, 1.1159627396980978});
     iTree56.push_back({3, 32, 6, 37, 1.2044869388185533});
@@ -5790,7 +5826,6 @@ int main(){
     iTree56.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree56);
 
-    std::vector<Tree> iTree57;
     iTree57.push_back({1, 78, 4, 129, 97.63450323587028});
     iTree57.push_back({2, 37, 7, 74, 0.44289358208049173});
     iTree57.push_back({3, 16, 4, 45, 85.79638295750897});
@@ -5950,7 +5985,6 @@ int main(){
     iTree57.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree57);
 
-    std::vector<Tree> iTree58;
     iTree58.push_back({1, 54, 0, 129, 12.361000820340097});
     iTree58.push_back({2, 35, 9, 45, 3.3928919929461605});
     iTree58.push_back({3, 26, 1, 35, 3.1327347684968316});
@@ -6070,7 +6104,6 @@ int main(){
     iTree58.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree58);
 
-    std::vector<Tree> iTree59;
     iTree59.push_back({1, 86, 8, 129, 1.9789781498993944});
     iTree59.push_back({2, 9, 2, 111, 1.8939389450325417});
     iTree59.push_back({3, 4, 2, 4, 1.442171572637549});
@@ -6194,7 +6227,6 @@ int main(){
     iTree59.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree59);
 
-    std::vector<Tree> iTree60;
     iTree60.push_back({1, 30, 8, 129, 1.6425563381726735});
     iTree60.push_back({2, 29, 12, 89, 1115.4768552726491});
     iTree60.push_back({3, 4, 10, 88, 0.5252377939854617});
@@ -6266,7 +6298,6 @@ int main(){
     iTree60.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree60);
 
-    std::vector<Tree> iTree61;
     iTree61.push_back({1, 78, 12, 129, 914.3273880483245});
     iTree61.push_back({2, 3, 0, 117, 11.255424989091964});
     iTree61.push_back({0, 0, -2, 1, -2.0});
@@ -6370,7 +6401,6 @@ int main(){
     iTree61.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree61);
 
-    std::vector<Tree> iTree62;
     iTree62.push_back({1, 84, 10, 129, 1.0321168024447203});
     iTree62.push_back({2, 47, 10, 84, 0.8203031026419629});
     iTree62.push_back({3, 30, 11, 51, 1.960934215844046});
@@ -6500,7 +6530,6 @@ int main(){
     iTree62.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree62);
 
-    std::vector<Tree> iTree63;
     iTree63.push_back({1, 46, 6, 129, 1.3726483577236495});
     iTree63.push_back({2, 41, 5, 56, 2.5129293531110792});
     iTree63.push_back({3, 36, 6, 53, 1.3064387736919265});
@@ -6586,7 +6615,6 @@ int main(){
     iTree63.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree63);
 
-    std::vector<Tree> iTree64;
     iTree64.push_back({1, 92, 8, 129, 2.7329696318410486});
     iTree64.push_back({2, 85, 11, 124, 3.536276892637293});
     iTree64.push_back({3, 44, 1, 120, 1.7242450809915808});
@@ -6690,7 +6718,6 @@ int main(){
     iTree64.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree64);
 
-    std::vector<Tree> iTree65;
     iTree65.push_back({1, 60, 5, 129, 1.653662869607429});
     iTree65.push_back({2, 43, 1, 37, 3.43271168467715});
     iTree65.push_back({3, 6, 0, 27, 11.931153302415188});
@@ -6810,7 +6837,6 @@ int main(){
     iTree65.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree65);
 
-    std::vector<Tree> iTree66;
     iTree66.push_back({1, 10, 7, 129, 0.1898138165760443});
     iTree66.push_back({2, 9, 12, 5, 877.1094927522863});
     iTree66.push_back({3, 6, 4, 4, 119.37926889088902});
@@ -6888,7 +6914,6 @@ int main(){
     iTree66.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree66);
 
-    std::vector<Tree> iTree67;
     iTree67.push_back({1, 2, 0, 129, 11.069726757628414});
     iTree67.push_back({0, 0, -2, 1, -2.0});
     iTree67.push_back({3, 72, 5, 128, 2.845147689325019});
@@ -6990,7 +7015,6 @@ int main(){
     iTree67.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree67);
 
-    std::vector<Tree> iTree68;
     iTree68.push_back({1, 92, 9, 129, 5.266529642643965});
     iTree68.push_back({2, 37, 9, 81, 2.5650795761721383});
     iTree68.push_back({3, 14, 9, 18, 2.0032804639582333});
@@ -7160,7 +7184,6 @@ int main(){
     iTree68.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree68);
 
-    std::vector<Tree> iTree69;
     iTree69.push_back({1, 96, 4, 129, 127.30810768590686});
     iTree69.push_back({2, 57, 7, 124, 0.5126545622983432});
     iTree69.push_back({3, 30, 4, 96, 89.41511544557991});
@@ -7268,7 +7291,6 @@ int main(){
     iTree69.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree69);
 
-    std::vector<Tree> iTree70;
     iTree70.push_back({1, 68, 5, 129, 3.383261349347118});
     iTree70.push_back({2, 65, 1, 127, 5.610948376829103});
     iTree70.push_back({3, 26, 7, 125, 0.2480753531244384});
@@ -7342,7 +7364,6 @@ int main(){
     iTree70.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree70);
 
-    std::vector<Tree> iTree71;
     iTree71.push_back({1, 46, 2, 129, 3.1183691804330262});
     iTree71.push_back({2, 45, 10, 128, 1.60964999120517});
     iTree71.push_back({3, 40, 1, 127, 5.298678312593341});
@@ -7392,7 +7413,6 @@ int main(){
     iTree71.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree71);
 
-    std::vector<Tree> iTree72;
     iTree72.push_back({1, 68, 11, 129, 3.29642627805495});
     iTree72.push_back({2, 3, 12, 116, 310.7378609146633});
     iTree72.push_back({0, 0, -2, 1, -2.0});
@@ -7484,7 +7504,6 @@ int main(){
     iTree72.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree72);
 
-    std::vector<Tree> iTree73;
     iTree73.push_back({1, 104, 2, 129, 2.897940523791874});
     iTree73.push_back({2, 55, 11, 127, 2.282939460088534});
     iTree73.push_back({3, 28, 8, 59, 1.0203372364254517});
@@ -7594,7 +7613,6 @@ int main(){
     iTree73.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree73);
 
-    std::vector<Tree> iTree74;
     iTree74.push_back({1, 94, 6, 129, 4.116812873999759});
     iTree74.push_back({2, 53, 7, 128, 0.5058635850197888});
     iTree74.push_back({3, 8, 7, 100, 0.15140578082940792});
@@ -7692,7 +7710,6 @@ int main(){
     iTree74.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree74);
 
-    std::vector<Tree> iTree75;
     iTree75.push_back({1, 52, 8, 129, 3.533174802213845});
     iTree75.push_back({2, 5, 12, 128, 304.33720227439755});
     iTree75.push_back({3, 4, 2, 2, 2.1874608169962406});
@@ -7748,7 +7765,6 @@ int main(){
     iTree75.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree75);
 
-    std::vector<Tree> iTree76;
     iTree76.push_back({1, 38, 11, 129, 1.5834614134279903});
     iTree76.push_back({2, 27, 9, 19, 8.100766914235795});
     iTree76.push_back({3, 16, 2, 13, 2.3743042668333585});
@@ -7864,7 +7880,6 @@ int main(){
     iTree76.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree76);
 
-    std::vector<Tree> iTree77;
     iTree77.push_back({1, 100, 8, 129, 3.561061810228968});
     iTree77.push_back({2, 33, 10, 128, 0.6213004501438417});
     iTree77.push_back({3, 24, 6, 20, 1.2111231745625677});
@@ -7968,7 +7983,6 @@ int main(){
     iTree77.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree77);
 
-    std::vector<Tree> iTree78;
     iTree78.push_back({1, 88, 8, 129, 1.7071621416306961});
     iTree78.push_back({2, 47, 9, 92, 6.922814415013736});
     iTree78.push_back({3, 10, 6, 67, 0.48727871934570244});
@@ -8092,7 +8106,6 @@ int main(){
     iTree78.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree78);
 
-    std::vector<Tree> iTree79;
     iTree79.push_back({1, 48, 4, 129, 155.0782403466656});
     iTree79.push_back({2, 47, 9, 128, 12.233779988483064});
     iTree79.push_back({3, 26, 0, 127, 12.646485022693152});
@@ -8144,7 +8157,6 @@ int main(){
     iTree79.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree79);
 
-    std::vector<Tree> iTree80;
     iTree80.push_back({1, 112, 6, 129, 4.8110195842032555});
     iTree80.push_back({2, 61, 11, 128, 2.3246821062057674});
     iTree80.push_back({3, 30, 0, 63, 12.559958451317568});
@@ -8260,7 +8272,6 @@ int main(){
     iTree80.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree80);
 
-    std::vector<Tree> iTree81;
     iTree81.push_back({1, 80, 6, 129, 3.1609679138392197});
     iTree81.push_back({2, 53, 2, 124, 2.645434748537774});
     iTree81.push_back({3, 18, 11, 109, 1.4459672393527336});
@@ -8352,7 +8363,6 @@ int main(){
     iTree81.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree81);
 
-    std::vector<Tree> iTree82;
     iTree82.push_back({1, 38, 0, 129, 12.320346694112077});
     iTree82.push_back({2, 5, 5, 41, 1.361434190036022});
     iTree82.push_back({3, 4, 8, 2, 1.1829206968918968});
@@ -8508,7 +8518,6 @@ int main(){
     iTree82.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree82);
 
-    std::vector<Tree> iTree83;
     iTree83.push_back({1, 74, 11, 129, 2.115921629973181});
     iTree83.push_back({2, 33, 6, 52, 0.6237427525042423});
     iTree83.push_back({3, 32, 3, 16, 25.615342635372965});
@@ -8660,7 +8669,6 @@ int main(){
     iTree83.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree83);
 
-    std::vector<Tree> iTree84;
     iTree84.push_back({1, 78, 5, 129, 1.8573758679443397});
     iTree84.push_back({2, 57, 2, 53, 2.5396530228983916});
     iTree84.push_back({3, 46, 0, 42, 13.52813835133246});
@@ -8810,7 +8818,6 @@ int main(){
     iTree84.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree84);
 
-    std::vector<Tree> iTree85;
     iTree85.push_back({1, 24, 0, 129, 11.796230169588734});
     iTree85.push_back({2, 19, 3, 12, 22.27292256395934});
     iTree85.push_back({3, 10, 9, 9, 3.017501267326894});
@@ -8942,7 +8949,6 @@ int main(){
     iTree85.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree85);
 
-    std::vector<Tree> iTree86;
     iTree86.push_back({1, 36, 8, 129, 0.9337656116309168});
     iTree86.push_back({2, 7, 1, 20, 1.2002448482371002});
     iTree86.push_back({3, 6, 0, 3, 13.3171413626861});
@@ -9070,7 +9076,6 @@ int main(){
     iTree86.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree86);
 
-    std::vector<Tree> iTree87;
     iTree87.push_back({1, 64, 6, 129, 1.0187240941071178});
     iTree87.push_back({2, 35, 4, 40, 97.61051477753115});
     iTree87.push_back({3, 20, 4, 25, 91.8266826736865});
@@ -9224,7 +9229,6 @@ int main(){
     iTree87.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree87);
 
-    std::vector<Tree> iTree88;
     iTree88.push_back({1, 74, 11, 129, 2.0425938882954027});
     iTree88.push_back({2, 11, 7, 48, 0.259795775665559});
     iTree88.push_back({3, 10, 3, 5, 23.816916039128284});
@@ -9360,7 +9364,6 @@ int main(){
     iTree88.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree88);
 
-    std::vector<Tree> iTree89;
     iTree89.push_back({1, 6, 8, 129, 0.5457668485015832});
     iTree89.push_back({2, 3, 7, 3, 0.3306627767616197});
     iTree89.push_back({0, 0, -2, 1, -2.0});
@@ -9472,7 +9475,6 @@ int main(){
     iTree89.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree89);
 
-    std::vector<Tree> iTree90;
     iTree90.push_back({1, 98, 10, 129, 1.6757571636809496});
     iTree90.push_back({2, 43, 12, 128, 632.6272441496268});
     iTree90.push_back({3, 42, 8, 81, 2.972152192392915});
@@ -9574,7 +9576,6 @@ int main(){
     iTree90.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree90);
 
-    std::vector<Tree> iTree91;
     iTree91.push_back({1, 66, 4, 129, 89.24389424139815});
     iTree91.push_back({2, 21, 6, 51, 0.771931251082167});
     iTree91.push_back({3, 20, 8, 10, 1.2321984616751935});
@@ -9702,7 +9703,6 @@ int main(){
     iTree91.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree91);
 
-    std::vector<Tree> iTree92;
     iTree92.push_back({1, 2, 3, 129, 11.414464784237666});
     iTree92.push_back({0, 0, -2, 1, -2.0});
     iTree92.push_back({3, 14, 5, 128, 1.313234797113462});
@@ -9776,7 +9776,6 @@ int main(){
     iTree92.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree92);
 
-    std::vector<Tree> iTree93;
     iTree93.push_back({1, 80, 11, 129, 2.5226049406812825});
     iTree93.push_back({2, 53, 2, 72, 2.4755883056821544});
     iTree93.push_back({3, 42, 6, 45, 1.6227400270846817});
@@ -9928,7 +9927,6 @@ int main(){
     iTree93.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree93);
 
-    std::vector<Tree> iTree94;
     iTree94.push_back({1, 118, 6, 129, 3.138953899767704});
     iTree94.push_back({2, 61, 0, 121, 12.587248018633156});
     iTree94.push_back({3, 48, 7, 59, 0.5510054319924351});
@@ -10064,7 +10062,6 @@ int main(){
     iTree94.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree94);
 
-    std::vector<Tree> iTree95;
     iTree95.push_back({1, 44, 1, 129, 2.2119822832146476});
     iTree95.push_back({2, 43, 6, 70, 3.9146652996913867});
     iTree95.push_back({3, 32, 11, 69, 3.314681983010788});
@@ -10172,7 +10169,6 @@ int main(){
     iTree95.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree95);
 
-    std::vector<Tree> iTree96;
     iTree96.push_back({1, 2, 0, 129, 11.366382428861113});
     iTree96.push_back({0, 0, -2, 1, -2.0});
     iTree96.push_back({3, 46, 3, 128, 21.61773913724992});
@@ -10264,7 +10260,6 @@ int main(){
     iTree96.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree96);
 
-    std::vector<Tree> iTree97;
     iTree97.push_back({1, 68, 12, 129, 828.124480179569});
     iTree97.push_back({2, 67, 6, 110, 4.29019756433075});
     iTree97.push_back({3, 28, 1, 109, 1.605421317004293});
@@ -10370,7 +10365,6 @@ int main(){
     iTree97.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree97);
 
-    std::vector<Tree> iTree98;
     iTree98.push_back({1, 82, 12, 129, 1051.25624640717});
     iTree98.push_back({2, 55, 11, 122, 2.8297351855680684});
     iTree98.push_back({3, 4, 7, 83, 0.1663410986061471});
@@ -10432,14 +10426,14 @@ int main(){
     iTree98.push_back({59, 66, 0, 21, 11.943100776978204});
     iTree98.push_back({60, 63, 6, 5, 1.812128414052044});
     iTree98.push_back({61, 62, 6, 2, 1.6001659282019332});
-    i    iTree98.push_back({69, 70, 4, 15, 94.8460609460464});
-    iTree98.push_back({0, 0, -2, 10, -2.0});
-    iTree98.push_back({0, 0, -2, 5, -2.0});
-    iTree98.push_back({72, 73, 0, 15, 11.56325374306446});
     iTree98.push_back({0, 0, -2, 1, -2.0});
-    iTree98.push_back({74, 75, 3, 14, 15.472962600399256});
     iTree98.push_back({0, 0, -2, 1, -2.0});
-    iTree98.push_back({76, 77, 9, 13, 6.7883273588816415});
+    iTree98.push_back({64, 65, 0, 3, 11.578517743648376});
+    iTree98.push_back({0, 0, -2, 1, -2.0});
+    iTree98.push_back({0, 0, -2, 2, -2.0});
+    iTree98.push_back({67, 68, 9, 16, 1.7111618042856953});
+    iTree98.push_back({0, 0, -2, 1, -2.0});
+, 9, 13, 6.7883273588816415});
     iTree98.push_back({0, 0, -2, 12, -2.0});
     iTree98.push_back({0, 0, -2, 1, -2.0});
     iTree98.push_back({0, 0, -2, 1, -2.0});
@@ -10459,9 +10453,8 @@ int main(){
     iTree98.push_back({0, 0, -2, 1, -2.0});
     iTree98.push_back({0, 0, -2, 1, -2.0});
     iTree98.push_back({0, 0, -2, 1, -2.0});
-    iForest.push_back(iTree98);
+iForest.push_back(iTree98);
 
-    std::vector<Tree> iTree99;
     iTree99.push_back({1, 52, 6, 129, 1.43030770528913});
     iTree99.push_back({2, 43, 6, 58, 1.3181188459614193});
     iTree99.push_back({3, 40, 10, 53, 1.1906088380696715});
@@ -10565,9 +10558,8 @@ int main(){
     iTree99.push_back({0, 0, -2, 1, -2.0});
     iTree99.push_back({0, 0, -2, 1, -2.0});
     iTree99.push_back({0, 0, -2, 1, -2.0});
-    iForest.push_back(iTree99);
+iForest.push_back(iTree99);
 
-    std::vector<Tree> iTree100;
     iTree100.push_back({1, 76, 0, 129, 13.80635599019294});
     iTree100.push_back({2, 61, 2, 117, 2.704774813968071});
     iTree100.push_back({3, 28, 8, 109, 1.5360439517093156});
@@ -10667,18 +10659,8 @@ int main(){
     iTree100.push_back({0, 0, -2, 1, -2.0});
     iTree100.push_back({0, 0, -2, 1, -2.0});
     iTree100.push_back({0, 0, -2, 1, -2.0});
-    iForest.push_back(iTree100);
+iForest.push_back(iTree100);
 
-}   iTree100.push_back({94, 97, 2, 3, 2.342036937808129});
-    iTree100.push_back({95, 96, 2, 2, 2.2829173740875306});
-    iTree100.push_back({0, 0, -2, 1, -2.0});
-    iTree100.push_back({0, 0, -2, 1, -2.0});
-    iTree100.push_back({0, 0, -2, 1, -2.0});
-    iTree100.push_back({0, 0, -2, 1, -2.0});
-    iForest.push_back(iTree100);
-
-    std::vector<Tree> current = iForest[0];
-    int test = current[0].child_id_left;
-    std::cout << sizeof(current[0].child_id_right) << std::endl;
-
+}
+void loop() {
 }
