@@ -14,7 +14,7 @@ struct Data{
     float a, b, c, d, e, f, g, h, i, j ,k, l, m;
 };
 
-int c(int size){
+float c(int size){
 
     if (size > 2){
         return (2 * (log(size -1) + 0.5772156649)) - (2*(size-1)/size);
@@ -26,9 +26,19 @@ int c(int size){
 }
 
 
+
 std::vector<vector<Data>> dataSet;
 std::vector<vector<Tree>> iForest;
 std::vector<Tree> iTree1;
+std::vector<Tree> iTree2;
+std::vector<Tree> iTree3;
+std::vector<Tree> iTree4;
+std::vector<Tree> iTree5;
+std::vector<Tree> iTree6;
+std::vector<Tree> iTree7;
+std::vector<Tree> iTree8;
+std::vector<Tree> iTree9;
+std::vector<Tree> iTree10;
 std::vector<Data> data;
 
 int main(){
@@ -81,106 +91,75 @@ int main(){
     ndimData[2][11] = 2.87000000000000;
     ndimData[2][12] = 990;
 
-    iTree1.push_back({1, 72, 9, 129, 8.512631575962718});
-    iTree1.push_back({2, 67, 6, 113, 3.354350859158715});
-    iTree1.push_back({3, 38, 10, 110, 1.201983565315688});
-    iTree1.push_back({4, 11, 7, 91, 0.17383320749673187});
-    iTree1.push_back({5, 8, 7, 4, 0.16515764821816675});
-    iTree1.push_back({6, 7, 3, 2, 21.37882133614217});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({9, 10, 4, 2, 102.20460538016846});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({12, 25, 5, 87, 1.5453710968757037});
-    iTree1.push_back({13, 20, 8, 18, 1.4049271295354115});
-    iTree1.push_back({14, 17, 5, 14, 1.430484772958443});
-    iTree1.push_back({15, 16, 8, 9, 0.8555552436036673});
-    iTree1.push_back({0, 0, -2, 6, -2.0});
-    iTree1.push_back({0, 0, -2, 3, -2.0});
-    iTree1.push_back({18, 19, 9, 5, 7.54886059458337});
-    iTree1.push_back({0, 0, -2, 4, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({21, 24, 12, 4, 813.4082777720914});
-    iTree1.push_back({22, 23, 7, 3, 0.545124712087754});
-    iTree1.push_back({0, 0, -2, 2, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({26, 31, 3, 69, 20.76299544998902});
-    iTree1.push_back({27, 28, 3, 37, 11.141644327911536});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({29, 30, 0, 36, 12.607634286306062});
-    iTree1.push_back({0, 0, -2, 18, -2.0});
-    iTree1.push_back({0, 0, -2, 18, -2.0});
-    iTree1.push_back({32, 35, 8, 32, 1.139899498849706});
-    iTree1.push_back({33, 34, 6, 9, 1.9340674896169396});
-    iTree1.push_back({0, 0, -2, 8, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({36, 37, 8, 23, 1.3272121962401586});
-    iTree1.push_back({0, 0, -2, 4, -2.0});
-    iTree1.push_back({0, 0, -2, 19, -2.0});
-    iTree1.push_back({39, 52, 4, 19, 90.49656084715228});
-    iTree1.push_back({40, 41, 3, 9, 17.149880090332534});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({42, 47, 3, 8, 22.80349611342116});
-    iTree1.push_back({43, 44, 5, 5, 2.0622235007786704});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({45, 46, 8, 4, 2.488883140739828});
-    iTree1.push_back({0, 0, -2, 3, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({48, 49, 11, 3, 2.8933253066184066});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({50, 51, 6, 2, 2.032116812990321});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({53, 60, 9, 10, 3.2924277764262335});
-    iTree1.push_back({54, 55, 9, 4, 2.6218914105314144});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({56, 57, 9, 3, 2.934714524043481});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({58, 59, 4, 2, 102.52299241606285});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({61, 66, 3, 6, 26.00552356709052});
-    iTree1.push_back({62, 65, 3, 5, 18.360772474836917});
-    iTree1.push_back({63, 64, 9, 4, 3.634684251082052});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({0, 0, -2, 3, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({68, 71, 0, 3, 12.699479131235478});
-    iTree1.push_back({69, 70, 9, 2, 5.574424657074001});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({73, 98, 11, 16, 1.8263059122996346});
-    iTree1.push_back({74, 93, 11, 15, 1.7496950858969684});
-    iTree1.push_back({75, 76, 7, 12, 0.2386231206207518});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({77, 86, 1, 11, 2.8744867291456266});
-    iTree1.push_back({78, 81, 2, 5, 2.3629248915894303});
-    iTree1.push_back({79, 80, 9, 2, 9.750646242566814});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({82, 83, 9, 3, 9.342436959055457});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({84, 85, 7, 2, 0.33271734046734514});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({87, 92, 4, 6, 115.41209824449015});
-    iTree1.push_back({88, 91, 2, 5, 2.728288918511335});
-    iTree1.push_back({89, 90, 12, 4, 646.2875324866211});
-    iTree1.push_back({0, 0, -2, 2, -2.0});
-    iTree1.push_back({0, 0, -2, 2, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({94, 97, 7, 3, 0.45191416518063365});
-    iTree1.push_back({95, 96, 4, 2, 104.88875841204485});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
+    iTree1.push_back({1, 4, 0, 3, 13.771827205440342});
+    iTree1.push_back({2, 3, 3, 2, 16.82208635181144});
     iTree1.push_back({0, 0, -2, 1, -2.0});
     iTree1.push_back({0, 0, -2, 1, -2.0});
     iTree1.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree1);
+
+    iTree2.push_back({1, 4, 7, 3, 0.34224062699265073});
+    iTree2.push_back({2, 3, 8, 2, 1.8118507844859353});
+    iTree2.push_back({0, 0, -2, 1, -2.0});
+    iTree2.push_back({0, 0, -2, 1, -2.0});
+    iTree2.push_back({0, 0, -2, 1, -2.0});
+    iForest.push_back(iTree2);
+
+    iTree3.push_back({1, 2, 5, 3, 2.595825418461203});
+    iTree3.push_back({0, 0, -2, 1, -2.0});
+    iTree3.push_back({3, 4, 2, 2, 2.7103437290929557});
+    iTree3.push_back({0, 0, -2, 1, -2.0});
+    iTree3.push_back({0, 0, -2, 1, -2.0});
+    iForest.push_back(iTree3);
+
+    iTree4.push_back({1, 2, 6, 3, 2.952434820332614});
+    iTree4.push_back({0, 0, -2, 1, -2.0});
+    iTree4.push_back({3, 4, 2, 2, 2.690622230813098});
+    iTree4.push_back({0, 0, -2, 1, -2.0});
+    iTree4.push_back({0, 0, -2, 1, -2.0});
+    iForest.push_back(iTree4);
+
+    iTree5.push_back({1, 2, 6, 3, 2.809792329299664});
+    iTree5.push_back({0, 0, -2, 1, -2.0});
+    iTree5.push_back({3, 4, 2, 2, 2.704136673990785});
+    iTree5.push_back({0, 0, -2, 1, -2.0});
+    iTree5.push_back({0, 0, -2, 1, -2.0});
+    iForest.push_back(iTree5);
+
+    iTree6.push_back({1, 2, 8, 3, 1.7683328147365456});
+    iTree6.push_back({0, 0, -2, 1, -2.0});
+    iTree6.push_back({3, 4, 12, 2, 1103.5665372775711});
+    iTree6.push_back({0, 0, -2, 1, -2.0});
+    iTree6.push_back({0, 0, -2, 1, -2.0});
+    iForest.push_back(iTree6);
+
+    iTree7.push_back({1, 2, 7, 3, 0.3147047230514291});
+    iTree7.push_back({0, 0, -2, 1, -2.0});
+    iTree7.push_back({3, 4, 4, 2, 114.8050385838398});
+    iTree7.push_back({0, 0, -2, 1, -2.0});
+    iTree7.push_back({0, 0, -2, 1, -2.0});
+    iForest.push_back(iTree7);
+
+    iTree8.push_back({1, 4, 0, 3, 13.960032604245313});
+    iTree8.push_back({2, 3, 5, 2, 2.707890695242092});
+    iTree8.push_back({0, 0, -2, 1, -2.0});
+    iTree8.push_back({0, 0, -2, 1, -2.0});
+    iTree8.push_back({0, 0, -2, 1, -2.0});
+    iForest.push_back(iTree8);
+
+    iTree9.push_back({1, 2, 8, 3, 1.688364058857994});
+    iTree9.push_back({0, 0, -2, 1, -2.0});
+    iTree9.push_back({3, 4, 6, 2, 3.10473297533556});
+    iTree9.push_back({0, 0, -2, 1, -2.0});
+    iTree9.push_back({0, 0, -2, 1, -2.0});
+    iForest.push_back(iTree9);
+
+    iTree10.push_back({1, 2, 8, 3, 1.8247949987980339});
+    iTree10.push_back({0, 0, -2, 1, -2.0});
+    iTree10.push_back({3, 4, 10, 2, 1.149160814050181});
+    iTree10.push_back({0, 0, -2, 1, -2.0});
+    iTree10.push_back({0, 0, -2, 1, -2.0});
+    iForest.push_back(iTree10);
 
     std::vector<float> edges;
     //3 should be dataSet.size()
@@ -196,42 +175,47 @@ int main(){
             int length = 0;
             //With the OR j == 0 we ensure that the first iteration will go through since first
             //always has the id of 0
-            while ((current_node_id != 0 && current_node_id != 0) || length == 0)
+            while (current_node_id != 0 || length == 0)
             {
-                if (ndimData[i][tree[current_node_id].feature] < tree[current_node_id].threshold)
+                if (ndimData[i][tree[current_node_id].feature] < tree[current_node_id].threshold &&
+                    tree[current_node_id].threshold != -2)
                 {
                     current_node_id = tree[current_node_id].child_id_left;
+                    length += 1;
                 }
-                else
+                else if (ndimData[i][tree[current_node_id].feature] >= tree[current_node_id].threshold &&
+                    tree[current_node_id].threshold != -2)
                 {
                     current_node_id = tree[current_node_id].child_id_right;
-                }
-                
-                length += 1;
+                    length += 1;
+                }    
+                else
+                {
+                    break;
+                }            
             }
-            
             int leaf_size = tree[current_node_id].n_samples;
             float path_length = length + c(leaf_size);
-
             path.push_back(path_length);
         }
 
         //mean of elements in path before push into edges
         float average_path = 0;
-        for(int k = 0; k < path.size(); k++)
+        for(int k = 0; k < iForest.size(); k++)
         {
             average_path += path[k];
-            average_path = average_path/path.size();
-            edges.push_back(average_path);
         }
+        average_path = average_path/path.size();
+        edges.push_back(average_path);
+        path.clear();
     }
     
     std::vector<float> scores;
-    float score;
+    float score = 0;
     std::vector<float> average_length = edges;
     for (int i = 0; i < average_length.size(); i ++){
         score = pow(2, -average_length[i]/c(256));
-        float scorep = -1 * score + 0.4775;
+        float scorep =  -1 * score + 0.4775;
         scores.push_back(scorep);
     }
 
@@ -239,6 +223,8 @@ int main(){
     {
         //std::cout << average_length[i] << std::endl;
         //std::cout << c(256) << std::endl;
+        //std::cout << i;
+        std::cout << scores[i] << std::endl;
     }
     
 }
