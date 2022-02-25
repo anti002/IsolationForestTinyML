@@ -7,7 +7,7 @@
 
 using namespace std;
 
-std::vector<std::vector<std::string> > parsedCsv;
+std::vector<std::vector<std::string>> parsedCsv;
 
 struct Tree{
     int child_id_left, child_id_right;
@@ -30,7 +30,7 @@ void parseCSV()
         {
             parsedRow.push_back(cell);
         }
-
+        std::cout << parsedRow[0] << std::endl;
         parsedCsv.push_back(parsedRow);
     }
 };

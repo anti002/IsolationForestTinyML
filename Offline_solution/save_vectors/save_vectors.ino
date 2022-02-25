@@ -1,4 +1,8 @@
 #include <vector>
+#include <math.h>
+#include <string>
+#include <fstream>
+#include <sstream>
 using namespace std;
 
 struct Tree{
@@ -8,8 +12,9 @@ struct Tree{
 
 vector<vector<Tree>> iForest;
 std::vector<Tree> iTree1;
-
-void setup() {
+int i = 0;
+void setup() 
+{
     Serial.begin(9600);
     iTree1.push_back({1, 70, 2, 129, 3.001993747746314});
     iTree1.push_back({2, 3, 5, 128, 1.0984851564639742});
@@ -83,8 +88,20 @@ void setup() {
     iTree1.push_back({0, 0, -2, 1, -2.0});
     iTree1.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree1);
-
 }
-void loop() {
 
+void loop() 
+{
+  Serial.println(i);
+  i = i + 1;
+  if (iTree1.size() < i)
+  {
+    stay();
+  }
+}
+
+void stay(){
+  while (1 == 1){
+  Serial.println(i);
+  }
 }

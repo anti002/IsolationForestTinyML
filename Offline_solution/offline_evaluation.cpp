@@ -14,13 +14,13 @@ struct Tree{
     float threshold;
 };
 
-std::vector<std::vector<std::string>> parsedCsv;
 std::vector<vector<Tree>> iForest;
 std::vector<Tree> iTree1;
 
-void parseCSV()
-{
-    std::ifstream  data("C:\\Users\\anton\\OneDrive\\Skrivbord\\Thesis_Code\\IsolationForestTinyML\\DatSets\\test.csv");
+std::vector<std::vector<std::string>> parseCSV()
+{   
+    std::vector<std::vector<std::string>> parsedCsv;
+    std::ifstream data("C:\\Users\\anton\\OneDrive\\Skrivbord\\Thesis_Code\\IsolationForestTinyML\\DatSets\\test.csv");
     std::string line;
     while(std::getline(data,line))
     {
@@ -34,37 +34,38 @@ void parseCSV()
 
         parsedCsv.push_back(parsedRow);
     }
+    return parsedCsv;
 };
 
-float c(float size){
-
-    if (size > 2){
+float c(float size)
+{
+    if (size > 2)
+    {
         float temp = (2 * (log(size -1) + 0.5772156649)) - (2*(size-1)/size);
         return temp;
     }
-    if (size == 2){
+    if (size == 2)
+    {
         return 1;
     }
     return 0;
 }
 
-//TODO Write code for traversing nodes AND calculate mean path
-std::vector<float> path_length(std::vector<vector<Tree>> forest, std::vector<std::vector<std::string>> data)
+std::vector<float> path_length(std::vector<vector<Tree>> forest, std::vector<std::vector<std::string>> parsedCsv)
 {
 
     std::vector<float> edges;
 
-    for (int i = 0; i < parsedCsv.size(); i++)
+    for (size_t i = 0; i < parsedCsv.size(); i++)
     {
         std::vector<float> path;
 
-        for (int j = 0; j < iForest.size(); j++)
+        for (size_t j = 0; j < iForest.size(); j++)
         {
             std::vector<Tree> tree = iForest[j];
             int current_node_id = 0;
             int length = 0;
-            //With the OR j == 0 we ensure that the first iteration will go through since first
-            //always has the id of 0
+            
             while (length == 0 || tree[current_node_id].child_id_left != 0)
             {
                 float splitValue_attribute = std::stof(parsedCsv[i][tree[current_node_id].feature]);
@@ -86,7 +87,6 @@ std::vector<float> path_length(std::vector<vector<Tree>> forest, std::vector<std
             path.push_back(path_length);
         }
 
-        //mean of elements in path before push into edges
         float average_path = 0;
         for(int k = 0; k < iForest.size(); k++)
         {
@@ -100,16 +100,14 @@ std::vector<float> path_length(std::vector<vector<Tree>> forest, std::vector<std
 }
 
 
-//TODO: Remove the extra step of storing the score in a float varaible
-std::vector<float> decision_function(std::vector<vector<Tree>> forest, std::vector<std::vector<std::string>> data)
+std::vector<float> decision_function(std::vector<vector<Tree>> forest, std::vector<std::vector<std::string>> parsedCsv)
 {
     std::vector<float> scores;
     float score = 0;
-    std::vector<float> average_length = path_length(forest, data);
-    for (int i = 0; i < average_length.size(); i ++)
+    std::vector<float> average_length = path_length(forest, parsedCsv);
+    for (size_t i = 0; i < average_length.size(); i ++)
     {
-        score = pow(2, (-1 * average_length[i])/c(parsedCsv.size()));
-        float scorep =  0.5 - score;
+        float scorep =  0.5 - pow(2, (-1 * average_length[i])/c(parsedCsv.size()));
         scores.push_back(scorep);
     }
     return scores;
@@ -117,7 +115,8 @@ std::vector<float> decision_function(std::vector<vector<Tree>> forest, std::vect
 
 
 int main(){
-    parseCSV();
+    std::vector<std::vector<std::string>> parsedCsv = parseCSV();
+
     iTree1.push_back({1, 70, 2, 129, 3.001993747746314});
     iTree1.push_back({2, 3, 5, 128, 1.0984851564639742});
     iTree1.push_back({0, 0, -2, 1, -2.0});
@@ -191,10 +190,7 @@ int main(){
     iTree1.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree1);
 
-
     std::vector<float> scores_pred = decision_function(iForest, parsedCsv);
-
-    
     for (size_t i = 0; i < scores_pred.size(); i++)
     {
         std::cout << scores_pred[i] << std::endl;
