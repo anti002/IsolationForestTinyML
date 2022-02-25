@@ -7,7 +7,7 @@
 
 using namespace std;
 
-std::vector<std::vector<std::string>> parsedCsv;
+std::vector<std::vector<float>> parsedCsv;
 
 struct Tree{
     int child_id_left, child_id_right;
@@ -25,10 +25,10 @@ void parseCSV()
     {
         std::stringstream lineStream(line);
         std::string cell;
-        std::vector<std::string> parsedRow;
+        std::vector<float> parsedRow;
         while(std::getline(lineStream,cell,','))
         {
-            parsedRow.push_back(cell);
+            parsedRow.push_back(std::stof(cell));
         }
         std::cout << parsedRow[0] << std::endl;
         parsedCsv.push_back(parsedRow);
@@ -143,7 +143,7 @@ int main(){
             //always has the id of 0
             while (length == 0 || tree[current_node_id].child_id_left != 0)
             {
-                float splitValue_attribute = std::stof(parsedCsv[i][tree[current_node_id].feature]);
+                float splitValue_attribute = parsedCsv[i][tree[current_node_id].feature];
                 float splitValue_node = tree[current_node_id].threshold;
                 if (splitValue_attribute < splitValue_node)
                 {

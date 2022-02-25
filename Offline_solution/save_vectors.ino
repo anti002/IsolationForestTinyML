@@ -1,20 +1,12 @@
-#include <iostream>
 #include <vector>
-#include <math.h>
-#include <string>
-#include <fstream>
-#include <sstream>
-
 using namespace std;
 
 struct Tree{
-    int child_id_left, child_id_right;
-    int feature;
-    int n_samples;
+    int child_id_left, child_id_right, feature, n_samples;
     float threshold;
 };
 
-std::vector<vector<Tree>> iForest;
+vector<vector<Tree>> iForest;
 std::vector<Tree> iTree1;
 std::vector<Tree> iTree2;
 std::vector<Tree> iTree3;
@@ -116,106 +108,8 @@ std::vector<Tree> iTree98;
 std::vector<Tree> iTree99;
 std::vector<Tree> iTree100;
 
-std::vector<std::vector<float>> parseCSV()
-{   
-    std::vector<std::vector<float>> parsedCsv;
-    std::ifstream data("C:\\Users\\anton\\OneDrive\\Skrivbord\\Thesis_Code\\IsolationForestTinyML\\DatSets\\test.csv");
-    std::string line;
-    while(std::getline(data,line))
-    {
-        std::stringstream lineStream(line);
-        std::string cell;
-        std::vector<float> parsedRow;
-        while(std::getline(lineStream,cell,','))
-        {
-            parsedRow.push_back(std::stof(cell));
-        }
-
-        parsedCsv.push_back(parsedRow);
-    }
-    return parsedCsv;
-};
-
-float c(float size)
-{
-    if (size > 2)
-    {
-        float temp = (2 * (log(size -1) + 0.5772156649)) - (2*(size-1)/size);
-        return temp;
-    }
-    if (size == 2)
-    {
-        return 1;
-    }
-    return 0;
-}
-
-std::vector<float> path_length(std::vector<vector<Tree>> forest, std::vector<std::vector<float>> parsedCsv)
-{
-
-    std::vector<float> edges;
-
-    for (size_t i = 0; i < parsedCsv.size(); i++)
-    {
-        std::vector<float> path;
-
-        for (size_t j = 0; j < iForest.size(); j++)
-        {
-            std::vector<Tree> tree = iForest[j];
-            int current_node_id = 0;
-            int length = 0;
-            
-            while (length == 0 || tree[current_node_id].child_id_left != 0)
-            {
-                float splitValue_attribute = parsedCsv[i][tree[current_node_id].feature];
-                float splitValue_node = tree[current_node_id].threshold;
-                if (splitValue_attribute < splitValue_node)
-                {
-                    current_node_id = tree[current_node_id].child_id_left;
-                    length += 1;
-                }
-                else
-                {
-                    current_node_id = tree[current_node_id].child_id_right;
-                    length += 1;
-                }
-            }
-            float leaf_size = tree[current_node_id].n_samples;
-            
-            float path_length = length + c(leaf_size);
-            path.push_back(path_length);
-        }
-
-        float average_path = 0;
-        for(int k = 0; k < iForest.size(); k++)
-        {
-            average_path += path[k];
-        }
-        average_path = average_path/path.size();
-        edges.push_back(average_path);
-        path.clear();
-    }
-    return edges;
-}
-
-
-std::vector<float> decision_function(std::vector<vector<Tree>> forest, std::vector<std::vector<float>> parsedCsv)
-{
-    std::vector<float> scores;
-    float score = 0;
-    std::vector<float> average_length = path_length(forest, parsedCsv);
-    for (size_t i = 0; i < average_length.size(); i ++)
-    {
-        float scorep =  0.5 - pow(2, (-1 * average_length[i])/c(parsedCsv.size()));
-        scores.push_back(scorep);
-    }
-    return scores;
-}
-
-
-int main(){
-    std::vector<std::vector<float>> parsedCsv = parseCSV();
-
+void setup() {
+    Serial.begin(9600);
     iTree1.push_back({1, 16, 1, 200, -2.8223255843807076});
     iTree1.push_back({2, 15, 0, 8, 4.63295735588763});
     iTree1.push_back({3, 14, 1, 7, -3.995549383803928});
@@ -10242,9 +10136,7 @@ int main(){
     iTree100.push_back({0, 0, -2, 1, -2.0});
     iForest.push_back(iTree100);
 
-    std::vector<float> scores_pred = decision_function(iForest, parsedCsv);
-    for (size_t i = 0; i < scores_pred.size(); i++)
-    {
-        std::cout << scores_pred[i] << std::endl;
-    }
+}
+void loop() {
+
 }
