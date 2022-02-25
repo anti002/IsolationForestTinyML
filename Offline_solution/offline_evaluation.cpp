@@ -1,6 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <math.h>
+#include <string>
+#include <fstream>
+#include <sstream>
+
 using namespace std;
 
 struct Tree{
@@ -10,67 +14,33 @@ struct Tree{
     float threshold;
 };
 
-std::vector<float> dataSet;
+std::vector<std::vector<std::string>> parsedCsv;
 std::vector<vector<Tree>> iForest;
 std::vector<Tree> iTree1;
 
-int main(){
-    iTree1.push_back({1, 2, 4, 129, 72.02171203215686});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({3, 36, 12, 128, 1088.404219455274});
-    iTree1.push_back({4, 35, 6, 122, 3.912145246030638});
-    iTree1.push_back({5, 26, 12, 121, 950.0623462926886});
-    iTree1.push_back({6, 15, 5, 116, 2.4736709211765993});
-    iTree1.push_back({7, 14, 4, 91, 149.0737372041092});
-    iTree1.push_back({8, 11, 12, 90, 431.6030703334152});
-    iTree1.push_back({9, 10, 9, 14, 3.2211440678204317});
-    iTree1.push_back({0, 0, -2, 9, -2.0});
-    iTree1.push_back({0, 0, -2, 5, -2.0});
-    iTree1.push_back({12, 13, 4, 76, 111.08964769779223});
-    iTree1.push_back({0, 0, -2, 65, -2.0});
-    iTree1.push_back({0, 0, -2, 11, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({16, 21, 7, 25, 0.2552607374518071});
-    iTree1.push_back({17, 18, 2, 7, 1.954436201640515});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({19, 20, 11, 6, 3.456564754783706});
-    iTree1.push_back({0, 0, -2, 5, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({22, 23, 3, 18, 15.21732546399223});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({24, 25, 11, 17, 2.8823696604929943});
-    iTree1.push_back({0, 0, -2, 10, -2.0});
-    iTree1.push_back({0, 0, -2, 7, -2.0});
-    iTree1.push_back({27, 32, 0, 5, 14.073755481150922});
-    iTree1.push_back({28, 31, 2, 3, 2.4516489567168356});
-    iTree1.push_back({29, 30, 2, 2, 2.303378063680138});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({33, 34, 3, 2, 17.836402147326805});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({37, 38, 6, 6, 2.430061976614103});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({39, 40, 2, 5, 2.4726853648578926});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({41, 46, 7, 4, 0.3495693537185417});
-    iTree1.push_back({42, 45, 11, 3, 3.4595430489988543});
-    iTree1.push_back({43, 44, 11, 2, 2.7296275542315263});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iTree1.push_back({0, 0, -2, 1, -2.0});
-    iForest.push_back(iTree1);
+void parseCSV()
+{
+    std::ifstream  data("C:\\Users\\anton\\OneDrive\\Skrivbord\\Thesis_Code\\IsolationForestTinyML\\DatSets\\test.csv");
+    std::string line;
+    while(std::getline(data,line))
+    {
+        std::stringstream lineStream(line);
+        std::string cell;
+        std::vector<std::string> parsedRow;
+        while(std::getline(lineStream,cell,','))
+        {
+            parsedRow.push_back(cell);
+        }
 
-    std::vector<float> scores = decision_function(iTree1, data);
-}
+        parsedCsv.push_back(parsedRow);
+    }
+};
 
-int c(int size){
+float c(float size){
 
     if (size > 2){
-        return 2 * (log(size -1) + 0.5772156649) - 2*(size-1)/size;
+        float temp = (2 * (log(size -1) + 0.5772156649)) - (2*(size-1)/size);
+        return temp;
     }
     if (size == 2){
         return 1;
@@ -79,66 +49,154 @@ int c(int size){
 }
 
 //TODO Write code for traversing nodes AND calculate mean path
-std::vector<float> path_length(std::vector<vector<Tree>> forest, std::vector<vector<float>> data)
+std::vector<float> path_length(std::vector<vector<Tree>> forest, std::vector<std::vector<std::string>> data)
 {
 
     std::vector<float> edges;
-    
-    for (int i = 0; i < dataSet.size(); i++)
-    {
 
+    for (int i = 0; i < parsedCsv.size(); i++)
+    {
         std::vector<float> path;
 
-        for (int j = 0; j < forest.size(); j++)
+        for (int j = 0; j < iForest.size(); j++)
         {
-            std::vector<Tree> tree = forest[j];
+            std::vector<Tree> tree = iForest[j];
             int current_node_id = 0;
             int length = 0;
-            
             //With the OR j == 0 we ensure that the first iteration will go through since first
             //always has the id of 0
-            while ((current_node_id != 0 && current_node_id != 0) || j == 0)
+            while (length == 0 || tree[current_node_id].child_id_left != 0)
             {
-                if (data[i][tree[current_node_id].feature] < tree[current_node_id].threshold)
+                float splitValue_attribute = std::stof(parsedCsv[i][tree[current_node_id].feature]);
+                float splitValue_node = tree[current_node_id].threshold;
+                if (splitValue_attribute < splitValue_node)
                 {
                     current_node_id = tree[current_node_id].child_id_left;
+                    length += 1;
                 }
                 else
                 {
                     current_node_id = tree[current_node_id].child_id_right;
+                    length += 1;
                 }
-
-                length += 1;
             }
+            float leaf_size = tree[current_node_id].n_samples;
             
-            int leaf_size = tree[current_node_id].n_samples;
             float path_length = length + c(leaf_size);
-
             path.push_back(path_length);
         }
 
         //mean of elements in path before push into edges
-        float average_path;
-        for(int k = 0; k < path.size(); k++)
+        float average_path = 0;
+        for(int k = 0; k < iForest.size(); k++)
         {
             average_path += path[k];
-            average_path = average_path/path.size();
-            edges.push_back(average_path);
         }
+        average_path = average_path/path.size();
+        edges.push_back(average_path);
+        path.clear();
     }
     return edges;
 }
 
 
 //TODO: Remove the extra step of storing the score in a float varaible
-std::vector<float> decision_function(std::vector<Tree> tree, std::vector<vector<float>> data){
-
+std::vector<float> decision_function(std::vector<vector<Tree>> forest, std::vector<std::vector<std::string>> data)
+{
     std::vector<float> scores;
-    float score;
-    std::vector<float> average_length = path_length(tree, data);
-    for (int i = 0; i < average_length.size(); i ++){
-        score = pow(2, -average_length[i]/c(256));
-        scores.push_back(-score + 0.4775);
+    float score = 0;
+    std::vector<float> average_length = path_length(forest, data);
+    for (int i = 0; i < average_length.size(); i ++)
+    {
+        score = pow(2, (-1 * average_length[i])/c(parsedCsv.size()));
+        float scorep =  0.5 - score;
+        scores.push_back(scorep);
     }
     return scores;
+}
+
+
+int main(){
+    parseCSV();
+    iTree1.push_back({1, 70, 2, 129, 3.001993747746314});
+    iTree1.push_back({2, 3, 5, 128, 1.0984851564639742});
+    iTree1.push_back({0, 0, -2, 1, -2.0});
+    iTree1.push_back({4, 23, 7, 127, 0.28393284182323786});
+    iTree1.push_back({5, 22, 12, 30, 996.0485382965061});
+    iTree1.push_back({6, 9, 0, 29, 11.801234189826335});
+    iTree1.push_back({7, 8, 6, 2, 2.462179098513871});
+    iTree1.push_back({0, 0, -2, 1, -2.0});
+    iTree1.push_back({0, 0, -2, 1, -2.0});
+    iTree1.push_back({10, 17, 12, 27, 661.2775011599424});
+    iTree1.push_back({11, 14, 0, 21, 13.339808253514153});
+    iTree1.push_back({12, 13, 1, 17, 1.3756862994552208});
+    iTree1.push_back({0, 0, -2, 8, -2.0});
+    iTree1.push_back({0, 0, -2, 9, -2.0});
+    iTree1.push_back({15, 16, 4, 4, 94.37649366556504});
+    iTree1.push_back({0, 0, -2, 2, -2.0});
+    iTree1.push_back({0, 0, -2, 2, -2.0});
+    iTree1.push_back({18, 21, 2, 6, 2.405038238620369});
+    iTree1.push_back({19, 20, 4, 5, 112.58449735100591});
+    iTree1.push_back({0, 0, -2, 3, -2.0});
+    iTree1.push_back({0, 0, -2, 2, -2.0});
+    iTree1.push_back({0, 0, -2, 1, -2.0});
+    iTree1.push_back({0, 0, -2, 1, -2.0});
+    iTree1.push_back({24, 43, 2, 97, 2.1954620702932384});
+    iTree1.push_back({25, 34, 12, 20, 580.7731478655586});
+    iTree1.push_back({26, 27, 6, 15, 1.1482157041960317});
+    iTree1.push_back({0, 0, -2, 1, -2.0});
+    iTree1.push_back({28, 31, 4, 14, 96.8548106070863});
+    iTree1.push_back({29, 30, 12, 11, 287.63854161726243});
+    iTree1.push_back({0, 0, -2, 1, -2.0});
+    iTree1.push_back({0, 0, -2, 10, -2.0});
+    iTree1.push_back({32, 33, 6, 3, 1.672542772913862});
+    iTree1.push_back({0, 0, -2, 2, -2.0});
+    iTree1.push_back({0, 0, -2, 1, -2.0});
+    iTree1.push_back({35, 38, 6, 5, 1.7471065887242392});
+    iTree1.push_back({36, 37, 12, 2, 663.7050281947968});
+    iTree1.push_back({0, 0, -2, 1, -2.0});
+    iTree1.push_back({0, 0, -2, 1, -2.0});
+    iTree1.push_back({39, 40, 5, 3, 1.926022271183056});
+    iTree1.push_back({0, 0, -2, 1, -2.0});
+    iTree1.push_back({41, 42, 5, 2, 2.108021920431228});
+    iTree1.push_back({0, 0, -2, 1, -2.0});
+    iTree1.push_back({0, 0, -2, 1, -2.0});
+    iTree1.push_back({44, 59, 1, 77, 3.7524134812585794});
+    iTree1.push_back({45, 52, 9, 59, 9.823295001416081});
+    iTree1.push_back({46, 49, 5, 53, 2.734010337929947});
+    iTree1.push_back({47, 48, 8, 44, 1.286949449167675});
+    iTree1.push_back({0, 0, -2, 21, -2.0});
+    iTree1.push_back({0, 0, -2, 23, -2.0});
+    iTree1.push_back({50, 51, 0, 9, 13.288019892552803});
+    iTree1.push_back({0, 0, -2, 4, -2.0});
+    iTree1.push_back({0, 0, -2, 5, -2.0});
+    iTree1.push_back({53, 56, 9, 6, 10.725589347545405});
+    iTree1.push_back({54, 55, 8, 4, 1.3203436166589797});
+    iTree1.push_back({0, 0, -2, 2, -2.0});
+    iTree1.push_back({0, 0, -2, 2, -2.0});
+    iTree1.push_back({57, 58, 7, 2, 0.5241137351697017});
+    iTree1.push_back({0, 0, -2, 1, -2.0});
+    iTree1.push_back({0, 0, -2, 1, -2.0});
+    iTree1.push_back({60, 67, 2, 18, 2.6440716025218216});
+    iTree1.push_back({61, 64, 4, 16, 97.1213274342573});
+    iTree1.push_back({62, 63, 8, 11, 0.918828054691188});
+    iTree1.push_back({0, 0, -2, 2, -2.0});
+    iTree1.push_back({0, 0, -2, 9, -2.0});
+    iTree1.push_back({65, 66, 7, 5, 0.3868779005231979});
+    iTree1.push_back({0, 0, -2, 2, -2.0});
+    iTree1.push_back({0, 0, -2, 3, -2.0});
+    iTree1.push_back({68, 69, 8, 2, 1.478487676481142});
+    iTree1.push_back({0, 0, -2, 1, -2.0});
+    iTree1.push_back({0, 0, -2, 1, -2.0});
+    iTree1.push_back({0, 0, -2, 1, -2.0});
+    iForest.push_back(iTree1);
+
+
+    std::vector<float> scores_pred = decision_function(iForest, parsedCsv);
+
+    
+    for (size_t i = 0; i < scores_pred.size(); i++)
+    {
+        std::cout << scores_pred[i] << std::endl;
+    }
 }

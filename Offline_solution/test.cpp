@@ -16,9 +16,6 @@ struct Tree{
     float threshold;
 };
 
-struct Data{
-    float a, b, c, d, e, f, g, h, i, j ,k, l, m;
-};
 
 void parseCSV()
 {
