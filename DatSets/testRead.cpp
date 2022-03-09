@@ -7,7 +7,7 @@
 
 using namespace std;
 
-std::vector<std::vector<float> > parsedCsv;
+std::vector<std::vector<std::string> > parsedCsv;
 
 void parseCSV()
 {
@@ -20,7 +20,7 @@ void parseCSV()
         std::vector<std::string> parsedRow;
         while(std::getline(lineStream,cell,','))
         {
-            parsedRow.push_back(float(cell));
+            parsedRow.push_back(cell);
         }
 
         parsedCsv.push_back(parsedRow);
@@ -31,5 +31,5 @@ int main()
 {
     parseCSV();
 
-    std::cout << parsedCsv[0][1] << std::endl;
+    std::cout << parsedCsv[0][0] << std::endl;
 }
