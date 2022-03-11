@@ -29,5 +29,4 @@ int main(){
     i++;
     }
     parsedCsv.push_back(parsedRow);
-    std::cout << parsedCsv[0][0];
 }

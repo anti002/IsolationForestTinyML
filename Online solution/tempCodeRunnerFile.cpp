@@ -1,1 +1,1 @@
-6
+internal_node
