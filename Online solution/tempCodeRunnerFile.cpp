@@ -1,1 +1,2 @@
-internal_node
+
+            current_node.isLeaf = false;
