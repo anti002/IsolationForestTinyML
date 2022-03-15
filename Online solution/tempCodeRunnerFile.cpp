@@ -1,2 +1,1 @@
-
-            current_node.isLeaf = false;
+node_stack

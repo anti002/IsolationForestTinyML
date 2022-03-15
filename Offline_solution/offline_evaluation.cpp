@@ -157,11 +157,10 @@ std::vector<float> path_length(std::vector<vector<Tree>> forest, std::vector<std
 
     for (size_t i = 0; i < parsedCsv.size(); i++)
     {
-        std::vector<float> path;
-
-        for (size_t j = 0; j < iForest.size(); j++)
+        float avg = 0;
+        for (size_t j = 0; j < forest.size(); j++)
         {
-            std::vector<Tree> tree = iForest[j];
+            std::vector<Tree> tree = forest[j];
             int current_node_id = 0;
             int length = 0;
             
@@ -183,17 +182,11 @@ std::vector<float> path_length(std::vector<vector<Tree>> forest, std::vector<std
             float leaf_size = tree[current_node_id].n_samples;
             
             float path_length = length + c(leaf_size);
-            path.push_back(path_length);
+            avg += path_length;
         }
 
-        float average_path = 0;
-        for(int k = 0; k < iForest.size(); k++)
-        {
-            average_path += path[k];
-        }
-        average_path = average_path/path.size();
+        float average_path = avg/forest.size();
         edges.push_back(average_path);
-        path.clear();
     }
     return edges;
 }
@@ -11281,8 +11274,11 @@ int main(){
     iForest.push_back(iTree100);
 
     std::vector<float> scores_pred = decision_function(iForest, parsedCsv);
+    float avg = 0;
     for (size_t i = 0; i < scores_pred.size(); i++)
     {
-        std::cout << scores_pred[i] << std::endl;
+        //std::cout << scores_pred[i] << std::endl;
+        avg += scores_pred[i];
     }
+    std::cout << avg/scores_pred.size() << std::endl;
 }

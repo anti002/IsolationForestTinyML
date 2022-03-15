@@ -189,7 +189,7 @@ class iForest
 int main(){
     std::vector<std::vector<float>> parsedCsv = parseCSV();
     
-    iForest clf = iForest(100, 256);
+    iForest clf = iForest(1, 256);
     int depthcount = 0;
     std::vector<std::vector<Node>> estimators = clf.fit(parsedCsv);
     for (size_t i = 0; i < estimators.size(); i++)
