@@ -11,7 +11,6 @@ struct DecisionNode
 {
     int child_left;
     int child_right;
-    //data for decision node
     std::vector<std::vector<float>> data_left;
     std::vector<std::vector<float>> data_right;
     int q_value;
@@ -51,6 +50,11 @@ float c(float size)
     return 0;
 }
 
+
+/*
+    Takes a .CSV file and parses the rows into a vector of floats
+    path has to be changed for this version of the code
+*/
 std::vector<std::vector<float>> parseCSV()
 {   
     std::vector<std::vector<float>> parsedCsv;
@@ -75,10 +79,8 @@ class iTree
 {
     public:
     int current_height, height_limit, id;
-    Node root;
     std::vector<std::vector<float>> data_left;
     std::vector<std::vector<float>> data_right;
-    std::vector<Node> nodes;
 
     iTree (int current_height, int height_limit)
     {
@@ -90,7 +92,7 @@ class iTree
     Node fit(std::vector<std::vector<float>> sub_sample)
     {
         Node current_node;
-        if (current_height >= height_limit || sub_sample.size() <= 2 )
+        if (current_height >= height_limit || sub_sample.size() <= 1)
         {   
             current_node.isLeaf = true;
             Leaf leaf;
@@ -142,6 +144,9 @@ class iTree
     };
 };
 
+/*
+    Methood used for taking a random sub sample from the data set
+*/
 template<class BidiIter >
 BidiIter random_unique(BidiIter begin, BidiIter end, size_t num_random) {
     size_t left = std::distance(begin, end);
@@ -168,11 +173,11 @@ class iForest
     std::vector<std::vector<Node>> fit(std::vector<std::vector<float>> dataSet)
     {
         std::vector<std::vector<Node>> iForest;
-        int height_limit = (int)ceil(log2(sample_size));
-        int n_rows = dataSet.size();
-        if (n_rows < sample_size)
+        int height_limit = (int)ceil(log2(this->sample_size));
+        
+        if (dataSet.size() < sample_size)
         {
-            this->sample_size = n_rows;
+            this->sample_size = dataSet.size();
         }
         for (size_t i = 0; i < t_trees; i++)
         {
@@ -191,7 +196,6 @@ class iForest
 std::vector<float> path_length(std::vector<std::vector<Node>> forest, std::vector<std::vector<float>> parsedCsv)
 {
     std::vector<float> edges;
-
     for (size_t i = 0; i < parsedCsv.size(); i++)
     {
         float avg = 0;
@@ -229,13 +233,10 @@ std::vector<float> path_length(std::vector<std::vector<Node>> forest, std::vecto
                 }
             }
             float leaf_size = forest[j][temp_id].leaf.size;
-            //std::cout << leaf_size << std::endl;
             float path_length = forest[j][temp_id].leaf.depth + c(leaf_size);
             avg += path_length;
         }
-        //std::cout << avg << std::endl;
         float average_path = avg/forest.size();
-        //std::cout << average_path << std::endl;
         edges.push_back(average_path);
     }
     return edges;
@@ -270,7 +271,4 @@ int main(){
         std::cout << scores[i] << std::endl;
         avg += scores[i];
     }
-
-    //std::cout << avg/scores.size() << std::endl;
-    
 }

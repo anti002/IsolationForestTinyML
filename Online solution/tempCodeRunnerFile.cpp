@@ -1,1 +1,2 @@
-node_stack
+
+    std::vector<Node> nodes;
