@@ -181,11 +181,14 @@ std::vector<float> path_length(std::vector<vector<Tree>> forest, std::vector<std
             }
             float leaf_size = tree[current_node_id].n_samples;
             
+            //std::cout <<  leaf_size << std::endl;
             float path_length = length + c(leaf_size);
             avg += path_length;
         }
+        //std::cout << avg << std::endl;
 
         float average_path = avg/forest.size();
+        //std::cout << average_path << std::endl;
         edges.push_back(average_path);
     }
     return edges;
@@ -11277,8 +11280,8 @@ int main(){
     float avg = 0;
     for (size_t i = 0; i < scores_pred.size(); i++)
     {
-        //std::cout << scores_pred[i] << std::endl;
+        std::cout << scores_pred[i] << std::endl;
         avg += scores_pred[i];
     }
-    std::cout << avg/scores_pred.size() << std::endl;
+    //std::cout << avg/scores_pred.size() << std::endl;
 }

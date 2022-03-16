@@ -9,8 +9,6 @@ using namespace std;
 
 struct DecisionNode
 {
-    int size;
-    int depth;
     int child_left;
     int child_right;
     //data for decision node
@@ -34,14 +32,6 @@ struct Node
     DecisionNode decision_node;
     bool isLeaf;
     int node_id;
-};
-
-struct Tree{
-    int child_id_left, child_id_right;
-    int feature;
-    int n_samples;
-    int depth;
-    float threshold;
 };
 
 std::vector<Node> node_stack;
@@ -120,8 +110,6 @@ class iTree
             DecisionNode decision_node;
             decision_node.q_value = rand() % sub_sample[0].size();
             decision_node.x_value = sub_sample[rand() % sub_sample.size()][decision_node.q_value];
-            decision_node.depth = this->current_height;
-            decision_node.size = sub_sample.size();
             current_node.decision_node = decision_node;
             current_node.node_id = current_node_id;
             current_node_id++;
@@ -202,7 +190,6 @@ class iForest
 
 std::vector<float> path_length(std::vector<std::vector<Node>> forest, std::vector<std::vector<float>> parsedCsv)
 {
-
     std::vector<float> edges;
 
     for (size_t i = 0; i < parsedCsv.size(); i++)
@@ -223,7 +210,7 @@ std::vector<float> path_length(std::vector<std::vector<Node>> forest, std::vecto
                     {
                         if (forest[j][k].node_id == key)
                         {
-                            temp_id = k;    
+                            temp_id = k;
                             break;
                         }
                     }
@@ -241,13 +228,14 @@ std::vector<float> path_length(std::vector<std::vector<Node>> forest, std::vecto
                     }
                 }
             }
-            
             float leaf_size = forest[j][temp_id].leaf.size;
+            //std::cout << leaf_size << std::endl;
             float path_length = forest[j][temp_id].leaf.depth + c(leaf_size);
             avg += path_length;
         }
-
+        //std::cout << avg << std::endl;
         float average_path = avg/forest.size();
+        //std::cout << average_path << std::endl;
         edges.push_back(average_path);
     }
     return edges;
@@ -279,10 +267,10 @@ int main(){
     float avg = 0;
     for (size_t i = 0; i < scores.size(); i++)
     {
-        //std::cout << scores[i] << std::endl;
+        std::cout << scores[i] << std::endl;
         avg += scores[i];
     }
 
-    std::cout << avg/scores.size() << std::endl;
+    //std::cout << avg/scores.size() << std::endl;
     
 }
