@@ -187,6 +187,7 @@ class iForest
             Node root = tree.fit(dataSet);
             iForest.push_back(node_stack);
             current_node_id = 0;
+            int sum = 0;
             std::vector<Node>().swap(node_stack);
         }
         return iForest;
@@ -205,8 +206,10 @@ std::vector<float> path_length(std::vector<std::vector<Node>> forest, std::vecto
             
             while (!forest[j][temp_id].isLeaf)
             {
-                float splitValue_data_set = parsedCsv[i][forest[j][temp_id].decision_node.q_value];
+                int q_value = forest[j][temp_id].decision_node.q_value;
+                float splitValue_data_set = parsedCsv[i][q_value];
                 float splitValue_node = forest[j][temp_id].decision_node.x_value;
+                
                 if (splitValue_data_set < splitValue_node)
                 {
                     int key = forest[j][temp_id].decision_node.child_left;
@@ -235,6 +238,7 @@ std::vector<float> path_length(std::vector<std::vector<Node>> forest, std::vecto
             float leaf_size = forest[j][temp_id].leaf.size;
             float path_length = forest[j][temp_id].leaf.depth + c(leaf_size);
             avg += path_length;
+            //std::cout << path_length << std::endl;
         }
         float average_path = avg/forest.size();
         edges.push_back(average_path);
@@ -246,18 +250,20 @@ std::vector<float> path_length(std::vector<std::vector<Node>> forest, std::vecto
 std::vector<float> decision_function(std::vector<std::vector<Node>> forest, std::vector<std::vector<float>> parsedCsv)
 {
     std::vector<float> scores;
-    float score = 0;
     std::vector<float> average_length = path_length(forest, parsedCsv);
     for (size_t i = 0; i < average_length.size(); i ++)
     {
+        //std::cout << average_length[i] << std::endl;
         float scorep =  0.5 - pow(2, (-1 * average_length[i])/c(parsedCsv.size()));
+        //std::cout << scorep << std::endl;
         scores.push_back(scorep);
     }
     return scores;
 }
 
 
-int main(){
+int main()
+{
     std::vector<std::vector<float>> parsedCsv = parseCSV();
     
     iForest clf = iForest(100, 256);
@@ -265,10 +271,10 @@ int main(){
     
     std::vector<float> scores = decision_function(estimators, parsedCsv);
 
-    float avg = 0;
+    float total = 0;
     for (size_t i = 0; i < scores.size(); i++)
     {
         std::cout << scores[i] << std::endl;
-        avg += scores[i];
     }
+    //std::cout << total << std::endl;
 }

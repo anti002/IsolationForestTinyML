@@ -9,11 +9,8 @@ using namespace std;
 
 struct DecisionNode
 {
-    int size;
-    int depth;
     int child_left;
     int child_right;
-    //data for decision node
     std::vector<std::vector<float>> data_left;
     std::vector<std::vector<float>> data_right;
     int q_value;
@@ -36,17 +33,28 @@ struct Node
     int node_id;
 };
 
-struct Tree{
-    int child_id_left, child_id_right;
-    int feature;
-    int n_samples;
-    int depth;
-    float threshold;
-};
-
 std::vector<Node> node_stack;
 int current_node_id = 0;
 
+float c(float size)
+{
+    if (size > 2)
+    {
+        float temp = (2 * (log(size -1) + 0.5772156649)) - (2*(size-1)/size);
+        return temp;
+    }
+    if (size == 2)
+    {
+        return 1;
+    }
+    return 0;
+}
+
+
+/*
+    Takes a .CSV file and parses the rows into a vector of floats
+    path has to be changed for this version of the code
+*/
 std::vector<std::vector<float>> parseCSV()
 {   
     std::vector<std::vector<float>> parsedCsv;
@@ -70,11 +78,9 @@ std::vector<std::vector<float>> parseCSV()
 class iTree
 {
     public:
-    int current_height, height_limit, n_nodes, id;
-    Node root;
+    int current_height, height_limit, id;
     std::vector<std::vector<float>> data_left;
     std::vector<std::vector<float>> data_right;
-    std::vector<Node> nodes;
 
     iTree (int current_height, int height_limit)
     {
@@ -86,7 +92,7 @@ class iTree
     Node fit(std::vector<std::vector<float>> sub_sample)
     {
         Node current_node;
-        if (current_height >= height_limit || sub_sample.size() <= 2 )
+        if (current_height >= height_limit || sub_sample.size() <= 1)
         {   
             current_node.isLeaf = true;
             Leaf leaf;
@@ -106,8 +112,6 @@ class iTree
             DecisionNode decision_node;
             decision_node.q_value = rand() % sub_sample[0].size();
             decision_node.x_value = sub_sample[rand() % sub_sample.size()][decision_node.q_value];
-            decision_node.depth = this->current_height;
-            decision_node.size = sub_sample.size();
             current_node.decision_node = decision_node;
             current_node.node_id = current_node_id;
             current_node_id++;
@@ -140,6 +144,9 @@ class iTree
     };
 };
 
+/*
+    Methood used for taking a random sub sample from the data set
+*/
 template<class BidiIter >
 BidiIter random_unique(BidiIter begin, BidiIter end, size_t num_random) {
     size_t left = std::distance(begin, end);
@@ -151,6 +158,69 @@ BidiIter random_unique(BidiIter begin, BidiIter end, size_t num_random) {
         --left;
     }
     return begin;
+}
+
+std::vector<float> path_length(std::vector<Node> tree, std::vector<std::vector<float>> parsedCsv)
+{
+    std::vector<float> edges;   
+
+    for (size_t i = 0; i < parsedCsv.size(); i++)
+    {
+        float avg = 0;
+        int temp_id = tree.size()-1;
+        while (!tree[temp_id].isLeaf)
+        {
+            int q_value = tree[temp_id].decision_node.q_value;
+            float splitValue_data_set = parsedCsv[i][q_value];
+            float splitValue_node = tree[temp_id].decision_node.x_value;
+            
+            if (splitValue_data_set < splitValue_node)
+            {
+                int key = tree[temp_id].decision_node.child_left;
+                for (size_t k = 0; k < tree.size(); k++)
+                {
+                    if (tree[k].node_id == key)
+                    {
+                        temp_id = k;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                int key = tree[temp_id].decision_node.child_right;
+                for (size_t l = 0; l < tree.size(); l++)
+                {
+                    if (tree[l].node_id == key)
+                    {
+                        temp_id = l;
+                        break;
+                    }
+                }
+            }
+        }
+        float leaf_size = tree[temp_id].leaf.size;
+        float path_length = tree[temp_id].leaf.depth + c(leaf_size);
+        avg += path_length;
+        edges.push_back(avg);
+    }
+    return edges;
+}
+
+std::vector<std::vector<float>> all_scores;
+void decision_function(std::vector<Node> tree, std::vector<std::vector<float>> parsedCsv)
+{
+    std::vector<float> scores;
+    std::vector<float> average_length = path_length(tree, parsedCsv);
+
+    for (size_t i = 0; i < average_length.size(); i ++)
+    {
+        //std::cout << average_length[i] << std::endl;
+        float scorep =  0.5 - pow(2, (-1 * average_length[i])/c(parsedCsv.size()));
+        //std::cout << scorep << std::endl;
+        scores.push_back(scorep);
+    }
+    all_scores.push_back(scores);
 }
 
 class iForest 
@@ -165,12 +235,13 @@ class iForest
 
     std::vector<std::vector<Node>> fit(std::vector<std::vector<float>> dataSet)
     {
+        std::vector<std::vector<float>> dataSet_ = dataSet;
         std::vector<std::vector<Node>> iForest;
-        int height_limit = (int)ceil(log2(sample_size));
-        int n_rows = dataSet.size();
-        if (n_rows < sample_size)
+        int height_limit = (int)ceil(log2(this->sample_size));
+        
+        if (dataSet.size() < sample_size)
         {
-            this->sample_size = n_rows;
+            this->sample_size = dataSet.size();
         }
         for (size_t i = 0; i < t_trees; i++)
         {
@@ -178,56 +249,32 @@ class iForest
             
             iTree tree = iTree(0, height_limit);
             Node root = tree.fit(dataSet);
-            iForest.push_back(node_stack);
+            decision_function(node_stack, dataSet_);
+            int sum = 0;
+            //iForest.push_back(node_stack);
             current_node_id = 0;
-            node_stack.clear();
+            std::vector<Node>().swap(node_stack);
         }
         return iForest;
     };    
 };
 
-int main(){
+int main()
+{
     std::vector<std::vector<float>> parsedCsv = parseCSV();
     
     iForest clf = iForest(1, 256);
-    int depthcount = 0;
     std::vector<std::vector<Node>> estimators = clf.fit(parsedCsv);
-    for (size_t i = 0; i < estimators.size(); i++)
+
+    float total = 0;
+    for (size_t i = 0; i < all_scores[0].size(); i++)
     {
-        std::cout << "Tree";
-        std::cout << i << std::endl;
-        for (size_t j = estimators[i].size() - 1; j > 0; j--)
+        float average = 0;
+        for (size_t j = 0; j < all_scores.size(); j++)
         {
-            if (estimators[i][j].isLeaf)
-            {
-            std::cout << "  Node";
-            std::cout << estimators[i][j].node_id;
-            std::cout << ": ";
-            std::cout << estimators[i][j].leaf.child_left;
-            std::cout << " ";
-            std::cout << estimators[i][j].leaf.child_right;
-            std::cout << " ";
-            std::cout << estimators[i][j].leaf.depth;
-            std::cout << " ";
-            std::cout << estimators[i][j].leaf.size << std::endl;
-            }
-            else
-            {
-            std::cout << "  Node";
-            std::cout << estimators[i][j].node_id;
-            std::cout << ": ";
-            std::cout << estimators[i][j].decision_node.child_left;
-            std::cout << " ";
-            std::cout << estimators[i][j].decision_node.child_right;
-            std::cout << " ";
-            std::cout << estimators[i][j].decision_node.q_value;
-            std::cout << " ";
-            std::cout << estimators[i][j].decision_node.x_value;
-            std::cout << " ";
-            std::cout << estimators[i][j].decision_node.depth;
-            std::cout << " ";
-            std::cout << estimators[i][j].decision_node.size << std::endl;
-            }
+            average += all_scores[j][i];
         }
+        average = average/all_scores.size();
+        std::cout << average << std::endl;
     }
 }

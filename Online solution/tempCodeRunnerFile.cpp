@@ -1,2 +1,2 @@
 
-    std::vector<Node> nodes;
+    iForest clf = iForest(100, 256);
