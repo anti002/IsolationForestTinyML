@@ -21,7 +21,7 @@ struct DecisionNode
 
 struct Leaf
 {
-  int size;
+  int n_samples;
   int depth;
   int child_left;
   int child_right;
@@ -137,7 +137,7 @@ std::vector<float> path_length(std::vector<Node> tree, std::vector<std::vector<f
         }
       }
     }
-    float leaf_size = tree[temp_id].leaf.size;
+    float leaf_size = tree[temp_id].leaf.n_samples;
     float path_length = tree[temp_id].leaf.depth + c(leaf_size);
     avg += path_length;
     edges.push_back(avg);
@@ -183,7 +183,7 @@ class iTree
         current_node_id++;
         leaf.child_left = 0;
         leaf.child_right = 0;
-        leaf.size = sub_sample.size();
+        leaf.n_samples = sub_sample.size();
         leaf.depth = this->current_height;
         current_node.leaf = leaf;
         node_stack.push_back(current_node);
@@ -254,8 +254,6 @@ class iForest
         iTree tree = iTree(0, height_limit);
         Node root = tree.fit(dataSet);
         decision_function(node_stack, dataSet_);
-        int sum = 0;
-        //iForest.push_back(node_stack);
         current_node_id = 0;
         std::vector<Node>().swap(node_stack);
       }
@@ -265,7 +263,7 @@ class iForest
 
 void loop() {
 
-  iForest clf = iForest(1, 256);
+  iForest clf = iForest(1000, 256);
   std::vector<std::vector<Node>> estimators = clf.fit(parsedCsv);
 
   float total = 0;

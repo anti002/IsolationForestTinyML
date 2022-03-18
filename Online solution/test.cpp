@@ -275,6 +275,5 @@ int main()
             average += all_scores[j][i];
         }
         average = average/all_scores.size();
-        std::cout << average << std::endl;
     }
 }
