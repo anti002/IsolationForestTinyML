@@ -207,26 +207,25 @@ std::vector<float> path_length(std::vector<Node> tree, std::vector<std::vector<f
     return edges;
 }
 
-std::vector<std::vector<float>> all_scores;
-void decision_function(std::vector<Node> tree, std::vector<std::vector<float>> parsedCsv)
+
+std::vector<float> decision_function(std::vector<float> average_length, std::vector<std::vector<float>> parsedCsv)
 {
     std::vector<float> scores;
-    std::vector<float> average_length = path_length(tree, parsedCsv);
-
-    for (size_t i = 0; i < average_length.size(); i ++)
+    //Go thorugh average_length and save to another vector then average the other vector for the calculation
+    
+    for (size_t i = 0; i < average_length.size(); i++)
     {
-        //std::cout << average_length[i] << std::endl;
         float scorep =  0.5 - pow(2, (-1 * average_length[i])/c(parsedCsv.size()));
-        //std::cout << scorep << std::endl;
         scores.push_back(scorep);
     }
-    all_scores.push_back(scores);
+    return scores;
 }
 
 class iForest 
 {
     public:
     int t_trees, sample_size;
+    std::vector<float> anomaly_scores;
     iForest (int t_trees, int sample_size)
     {
         this->t_trees = t_trees;
@@ -237,6 +236,8 @@ class iForest
     {
         std::vector<std::vector<float>> dataSet_ = dataSet;
         std::vector<std::vector<Node>> iForest;
+        std::vector<std::vector<float>> all_paths;
+        std::vector<float> average_paths;
         int height_limit = (int)ceil(log2(this->sample_size));
         
         if (dataSet.size() < sample_size)
@@ -249,12 +250,22 @@ class iForest
             
             iTree tree = iTree(0, height_limit);
             Node root = tree.fit(dataSet);
-            decision_function(node_stack, dataSet_);
-            int sum = 0;
-            //iForest.push_back(node_stack);
+            all_paths.push_back(path_length(node_stack, dataSet_));
             current_node_id = 0;
             std::vector<Node>().swap(node_stack);
         }
+
+
+        for (size_t i = 0; i < all_paths[0].size(); i++)
+        {
+            float total = 0;
+            for (size_t j = 0; j < all_paths.size(); j++)
+            {
+                total += all_paths[j][i];
+            }
+            average_paths.push_back(total/all_paths.size());
+        }
+        anomaly_scores = decision_function(average_paths, dataSet_);
         return iForest;
     };    
 };
@@ -263,17 +274,11 @@ int main()
 {
     std::vector<std::vector<float>> parsedCsv = parseCSV();
     
-    iForest clf = iForest(1, 256);
+    iForest clf = iForest(2, 256);
     std::vector<std::vector<Node>> estimators = clf.fit(parsedCsv);
-
-    float total = 0;
-    for (size_t i = 0; i < all_scores[0].size(); i++)
+    
+    for (size_t i = 0; i < clf.anomaly_scores.size(); i++)
     {
-        float average = 0;
-        for (size_t j = 0; j < all_scores.size(); j++)
-        {
-            average += all_scores[j][i];
-        }
-        average = average/all_scores.size();
+        std::cout << clf.anomaly_scores[i] << std::endl;
     }
 }

@@ -238,7 +238,7 @@ std::vector<float> path_length(std::vector<std::vector<Node>> forest, std::vecto
             float leaf_size = forest[j][temp_id].leaf.size;
             float path_length = forest[j][temp_id].leaf.depth + c(leaf_size);
             avg += path_length;
-            //std::cout << path_length << std::endl;
+            //std::cout << avg << std::endl;
         }
         float average_path = avg/forest.size();
         edges.push_back(average_path);
@@ -266,7 +266,7 @@ int main()
 {
     std::vector<std::vector<float>> parsedCsv = parseCSV();
     
-    iForest clf = iForest(1, 256);
+    iForest clf = iForest(2, 256);
     std::vector<std::vector<Node>> estimators = clf.fit(parsedCsv);
     
     std::vector<float> scores = decision_function(estimators, parsedCsv);
