@@ -232,10 +232,9 @@ class iForest
         this->sample_size = sample_size;
     }
 
-    std::vector<std::vector<Node>> fit(std::vector<std::vector<float>> dataSet)
+    void fit(std::vector<std::vector<float>> dataSet)
     {
         std::vector<std::vector<float>> dataSet_ = dataSet;
-        std::vector<std::vector<Node>> iForest;
         std::vector<std::vector<float>> all_paths;
         std::vector<float> average_paths;
         int height_limit = (int)ceil(log2(this->sample_size));
@@ -266,7 +265,6 @@ class iForest
             average_paths.push_back(total/all_paths.size());
         }
         anomaly_scores = decision_function(average_paths, dataSet_);
-        return iForest;
     };    
 };
 
@@ -274,9 +272,8 @@ int main()
 {
     std::vector<std::vector<float>> parsedCsv = parseCSV();
     
-    iForest clf = iForest(2, 256);
-    std::vector<std::vector<Node>> estimators = clf.fit(parsedCsv);
-    
+    iForest clf = iForest(100, 256);
+    clf.fit(parsedCsv);
     for (size_t i = 0; i < clf.anomaly_scores.size(); i++)
     {
         std::cout << clf.anomaly_scores[i] << std::endl;

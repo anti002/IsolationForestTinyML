@@ -266,7 +266,7 @@ int main()
 {
     std::vector<std::vector<float>> parsedCsv = parseCSV();
     
-    iForest clf = iForest(2, 256);
+    iForest clf = iForest(100, 256);
     std::vector<std::vector<Node>> estimators = clf.fit(parsedCsv);
     
     std::vector<float> scores = decision_function(estimators, parsedCsv);
