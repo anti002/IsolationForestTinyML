@@ -35,6 +35,8 @@ struct Node
 
 std::vector<Node> node_stack;
 int current_node_id = 0;
+const int NUMBER_OF_TREES = 100;
+const int SAMPLE_SIZE = 256;
 
 float c(float size)
 {
@@ -160,6 +162,30 @@ BidiIter random_unique(BidiIter begin, BidiIter end, size_t num_random) {
     return begin;
 }
 
+int next_tree_id_left(std::vector<Node> tree, int temp_id)
+{
+    int key = tree[temp_id].decision_node.child_left;
+    for (size_t k = 0; k < tree.size(); k++)
+    {
+        if (tree[k].node_id == key)
+        {
+            return k;
+        }
+    }
+}
+
+int next_tree_id_right(std::vector<Node> tree, int temp_id)
+{
+    int key = tree[temp_id].decision_node.child_right;
+    for (size_t k = 0; k < tree.size(); k++)
+    {
+        if (tree[k].node_id == key)
+        {
+            return k;
+        }
+    }
+}
+
 std::vector<float> path_length(std::vector<Node> tree, std::vector<std::vector<float>> parsedCsv)
 {
     std::vector<float> edges;   
@@ -176,32 +202,14 @@ std::vector<float> path_length(std::vector<Node> tree, std::vector<std::vector<f
             
             if (splitValue_data_set < splitValue_node)
             {
-                int key = tree[temp_id].decision_node.child_left;
-                for (size_t k = 0; k < tree.size(); k++)
-                {
-                    if (tree[k].node_id == key)
-                    {
-                        temp_id = k;
-                        break;
-                    }
-                }
+                temp_id = next_tree_id_left(tree, temp_id);
             }
             else
             {
-                int key = tree[temp_id].decision_node.child_right;
-                for (size_t l = 0; l < tree.size(); l++)
-                {
-                    if (tree[l].node_id == key)
-                    {
-                        temp_id = l;
-                        break;
-                    }
-                }
+                temp_id = next_tree_id_right(tree, temp_id);
             }
         }
-        float leaf_size = tree[temp_id].leaf.size;
-        float path_length = tree[temp_id].leaf.depth + c(leaf_size);
-        avg += path_length;
+        avg += tree[temp_id].leaf.depth + c(tree[temp_id].leaf.size);
         edges.push_back(avg);
     }
     return edges;
@@ -211,12 +219,9 @@ std::vector<float> path_length(std::vector<Node> tree, std::vector<std::vector<f
 std::vector<float> decision_function(std::vector<float> average_length, std::vector<std::vector<float>> parsedCsv)
 {
     std::vector<float> scores;
-    //Go thorugh average_length and save to another vector then average the other vector for the calculation
-    
     for (size_t i = 0; i < average_length.size(); i++)
     {
-        float scorep =  0.5 - pow(2, (-1 * average_length[i])/c(parsedCsv.size()));
-        scores.push_back(scorep);
+        scores.push_back(0.5 - pow(2, (-1 * average_length[i])/c(parsedCsv.size())));
     }
     return scores;
 }
@@ -254,7 +259,6 @@ class iForest
             std::vector<Node>().swap(node_stack);
         }
 
-
         for (size_t i = 0; i < all_paths[0].size(); i++)
         {
             float total = 0;
@@ -272,7 +276,7 @@ int main()
 {
     std::vector<std::vector<float>> parsedCsv = parseCSV();
     
-    iForest clf = iForest(100, 256);
+    iForest clf = iForest(NUMBER_OF_TREES, SAMPLE_SIZE);
     clf.fit(parsedCsv);
     for (size_t i = 0; i < clf.anomaly_scores.size(); i++)
     {
