@@ -21,8 +21,6 @@ struct Leaf
 {
     int size;
     int depth;
-    int child_left;
-    int child_right;
 };
 
 struct Node
@@ -52,7 +50,6 @@ float c(float size)
     return 0;
 }
 
-
 /*
     Takes a .CSV file and parses the rows into a vector of floats
     path has to be changed for this version of the code
@@ -80,7 +77,7 @@ std::vector<std::vector<float>> parseCSV()
 class iTree
 {
     public:
-    int current_height, height_limit, id;
+    int current_height, height_limit;
     std::vector<std::vector<float>> data_left;
     std::vector<std::vector<float>> data_right;
 
@@ -88,7 +85,6 @@ class iTree
     {
         this->current_height = current_height;
         this->height_limit = height_limit;
-        this->id = current_node_id;
     }
     
     Node fit(std::vector<std::vector<float>> sub_sample)
@@ -100,8 +96,6 @@ class iTree
             Leaf leaf;
             current_node.node_id = current_node_id;
             current_node_id++;
-            leaf.child_left = 0;
-            leaf.child_right = 0;
             leaf.size = sub_sample.size();
             leaf.depth = this->current_height;
             current_node.leaf = leaf;  
@@ -192,7 +186,6 @@ std::vector<float> path_length(std::vector<Node> tree, std::vector<std::vector<f
 
     for (size_t i = 0; i < parsedCsv.size(); i++)
     {
-        float avg = 0;
         int temp_id = tree.size()-1;
         while (!tree[temp_id].isLeaf)
         {
@@ -209,24 +202,23 @@ std::vector<float> path_length(std::vector<Node> tree, std::vector<std::vector<f
                 temp_id = next_tree_id_right(tree, temp_id);
             }
         }
-        avg += tree[temp_id].leaf.depth + c(tree[temp_id].leaf.size);
-        edges.push_back(avg);
+        edges.push_back(tree[temp_id].leaf.depth + c(tree[temp_id].leaf.size));
     }
     return edges;
 }
 
 
-std::vector<float> decision_function(std::vector<float> average_length, std::vector<std::vector<float>> parsedCsv)
+std::vector<float> decision_function(float average_length[], std::vector<std::vector<float>> parsedCsv)
 {
     std::vector<float> scores;
-    for (size_t i = 0; i < average_length.size(); i++)
+    for (size_t i = 0; i < 129; i++)
     {
         scores.push_back(0.5 - pow(2, (-1 * average_length[i])/c(parsedCsv.size())));
     }
     return scores;
 }
 
-class iForest 
+class iForest
 {
     public:
     int t_trees, sample_size;
@@ -240,7 +232,7 @@ class iForest
     void fit(std::vector<std::vector<float>> dataSet)
     {
         std::vector<std::vector<float>> dataSet_ = dataSet;
-        std::vector<std::vector<float>> all_paths;
+        float testing [dataSet.size()] = {0};
         std::vector<float> average_paths;
         int height_limit = (int)ceil(log2(this->sample_size));
         
@@ -254,21 +246,21 @@ class iForest
             
             iTree tree = iTree(0, height_limit);
             Node root = tree.fit(dataSet);
-            all_paths.push_back(path_length(node_stack, dataSet_));
+            std::vector<float> lengths = path_length(node_stack, dataSet_);
+            
+            for (size_t j = 0; j < lengths.size(); j++)
+            {
+                testing[j] = testing[j] + lengths[j];
+            }
             current_node_id = 0;
             std::vector<Node>().swap(node_stack);
         }
-
-        for (size_t i = 0; i < all_paths[0].size(); i++)
+                  
+        for (size_t j = 0; j < dataSet_.size(); j++)
         {
-            float total = 0;
-            for (size_t j = 0; j < all_paths.size(); j++)
-            {
-                total += all_paths[j][i];
-            }
-            average_paths.push_back(total/all_paths.size());
+            testing[j] = testing[j]/100;
         }
-        anomaly_scores = decision_function(average_paths, dataSet_);
+        anomaly_scores = decision_function(testing, dataSet_);
     };    
 };
 

@@ -1,4 +1,3 @@
-#include <iostream>
 #include <vector>
 #include <math.h>
 #include <string>
@@ -43,16 +42,19 @@ std::vector<std::vector<float>> parsedCsv;
 File myFile;
 int columns = 13;
 
-void setup() {
+void setup()
+{
   Serial.begin(9600);
   delay(5000);
   Serial.println("Initializing SD card...");
 
-  if (!SD.begin(10)) {
+  if (!SD.begin(10))
+  {
   }
 
   myFile = SD.open("test.csv", FILE_READ);
-  while (myFile.available()) {
+  while (myFile.available())
+  {
     String list = myFile.readStringUntil('\n');
 
     char tab2[1024];
@@ -62,7 +64,8 @@ void setup() {
     int i = 1;
     std::vector<float> parsedRow;
     parsedRow.push_back(std::stof(strtokIndx));
-    while (i < columns) {
+    while (i < columns)
+    {
       strtokIndx = strtok(NULL, ",");
       parsedRow.push_back(std::stof(strtokIndx));
       i++;
@@ -87,9 +90,11 @@ float c(float size)
 }
 
 template<class BidiIter >
-BidiIter random_unique(BidiIter begin, BidiIter end, size_t num_random) {
+BidiIter random_unique(BidiIter begin, BidiIter end, size_t num_random)
+{
   size_t left = std::distance(begin, end);
-  while (num_random--) {
+  while (num_random--)
+  {
     BidiIter r = begin;
     std::advance(r, rand() % left);
     std::swap(*begin, *r);
@@ -261,9 +266,9 @@ class iForest
     };
 };
 
-void loop() {
-
-  iForest clf = iForest(100, 256);
+void loop()
+{
+  iForest clf = iForest(1, 256);
   std::vector<std::vector<Node>> estimators = clf.fit(parsedCsv);
 
   float total = 0;
