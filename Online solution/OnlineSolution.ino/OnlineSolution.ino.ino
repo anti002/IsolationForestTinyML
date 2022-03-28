@@ -10,20 +10,18 @@ using namespace std;
 
 struct DecisionNode
 {
-  int child_left;
-  int child_right;
+  unsigned char child_left;
+  unsigned char child_right;
   std::vector<std::vector<float>> data_left;
   std::vector<std::vector<float>> data_right;
-  int q_value;
+  unsigned char q_value;
   float x_value;
 };
 
 struct Leaf
 {
   int n_samples;
-  int depth;
-  int child_left;
-  int child_right;
+  unsigned char depth;
 };
 
 struct Node
@@ -31,16 +29,17 @@ struct Node
   Leaf leaf;
   DecisionNode decision_node;
   bool isLeaf;
-  int node_id;
+  unsigned char node_id;
 };
 
 std::vector<Node> node_stack;
-int current_node_id = 0;
+unsigned char current_node_id = 0;
 
-std::vector<std::vector<float>> all_scores;
 std::vector<std::vector<float>> parsedCsv;
 File myFile;
-int columns = 13;
+const unsigned char NUMBER_OF_COLUMNS = 13;
+const int NUMBER_OF_TREES = 100;
+const int SAMPLE_SIZE = 256;
 
 void setup()
 {
@@ -64,7 +63,7 @@ void setup()
     int i = 1;
     std::vector<float> parsedRow;
     parsedRow.push_back(std::stof(strtokIndx));
-    while (i < columns)
+    while (i < NUMBER_OF_COLUMNS)
     {
       strtokIndx = strtok(NULL, ",");
       parsedRow.push_back(std::stof(strtokIndx));
@@ -72,7 +71,6 @@ void setup()
     }
     parsedCsv.push_back(parsedRow);
   }
-
 }
 
 float c(float size)
@@ -107,6 +105,7 @@ BidiIter random_unique(BidiIter begin, BidiIter end, size_t num_random)
 std::vector<float> path_length(std::vector<Node> tree, std::vector<std::vector<float>> parsedCsv)
 {
   std::vector<float> edges;
+
   for (size_t i = 0; i < parsedCsv.size(); i++)
   {
     float avg = 0;
@@ -142,31 +141,26 @@ std::vector<float> path_length(std::vector<Node> tree, std::vector<std::vector<f
         }
       }
     }
-    float leaf_size = tree[temp_id].leaf.n_samples;
-    float path_length = tree[temp_id].leaf.depth + c(leaf_size);
-    avg += path_length;
+    avg += tree[temp_id].leaf.depth + c(tree[temp_id].leaf.n_samples);
     edges.push_back(avg);
   }
   return edges;
 }
 
-void decision_function(std::vector<Node> tree, std::vector<std::vector<float>> parsedCsv)
+std::vector<float> decision_function(float average_length[], std::vector<std::vector<float>> parsedCsv)
 {
   std::vector<float> scores;
-  std::vector<float> average_length = path_length(tree, parsedCsv);
-
-  for (size_t i = 0; i < average_length.size(); i ++)
+  for (size_t i = 0; i < 129; i++)
   {
-    float scorep =  0.5 - pow(2, (-1 * average_length[i]) / c(parsedCsv.size()));
-    scores.push_back(scorep);
+    scores.push_back(0.5 - pow(2, (-1 * average_length[i]) / c(parsedCsv.size())));
   }
-  all_scores.push_back(scores);
+  return scores;
 }
 
 class iTree
 {
   public:
-    int current_height, height_limit, id;
+    unsigned char current_height, height_limit;
     std::vector<std::vector<float>> data_left;
     std::vector<std::vector<float>> data_right;
 
@@ -174,7 +168,6 @@ class iTree
     {
       this->current_height = current_height;
       this->height_limit = height_limit;
-      this->id = current_node_id;
     }
 
     Node fit(std::vector<std::vector<float>> sub_sample)
@@ -186,8 +179,6 @@ class iTree
         Leaf leaf;
         current_node.node_id = current_node_id;
         current_node_id++;
-        leaf.child_left = 0;
-        leaf.child_right = 0;
         leaf.n_samples = sub_sample.size();
         leaf.depth = this->current_height;
         current_node.leaf = leaf;
@@ -236,16 +227,18 @@ class iForest
 {
   public:
     int t_trees, sample_size;
+    std::vector<float> anomaly_scores;
     iForest (int t_trees, int sample_size)
     {
       this->t_trees = t_trees;
       this->sample_size = sample_size;
     }
 
-    std::vector<std::vector<Node>> fit(std::vector<std::vector<float>> dataSet)
+    void fit(std::vector<std::vector<float>> dataSet)
     {
       std::vector<std::vector<float>> dataSet_ = dataSet;
-      std::vector<std::vector<Node>> iForest;
+      float path_lengths [dataSet.size()] = {0};
+      std::vector<float> average_paths;
       int height_limit = (int)ceil(log2(this->sample_size));
 
       if (dataSet.size() < sample_size)
@@ -258,30 +251,34 @@ class iForest
 
         iTree tree = iTree(0, height_limit);
         Node root = tree.fit(dataSet);
-        decision_function(node_stack, dataSet_);
+        std::vector<float> lengths = path_length(node_stack, dataSet_);
+
+        for (size_t j = 0; j < lengths.size(); j++)
+        {
+          path_lengths[j] = path_lengths[j] + lengths[j];
+        }
         current_node_id = 0;
         std::vector<Node>().swap(node_stack);
       }
-      return iForest;
+
+      for (size_t j = 0; j < dataSet_.size(); j++)
+      {
+        path_lengths[j] = path_lengths[j] / NUMBER_OF_TREES;
+      }
+      anomaly_scores = decision_function(path_lengths, dataSet_);
     };
 };
 
 void loop()
 {
-  iForest clf = iForest(1, 256);
-  std::vector<std::vector<Node>> estimators = clf.fit(parsedCsv);
+  iForest clf = iForest(NUMBER_OF_TREES, SAMPLE_SIZE);
 
-  float total = 0;
-  for (size_t i = 0; i < all_scores[0].size(); i++)
+  clf.fit(parsedCsv);
+  for (size_t i = 0; i < clf.anomaly_scores.size(); i++)
   {
-    float average = 0;
-    for (size_t j = 0; j < all_scores.size(); j++)
-    {
-      average += all_scores[j][i];
-    }
-    average = average / all_scores.size();
-    Serial.println(average, 8);
+    Serial.println(clf.anomaly_scores[i], 8);
   }
-  while (true) {
+  while (true)
+  {
   }
 }

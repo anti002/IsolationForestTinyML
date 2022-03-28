@@ -37,7 +37,9 @@ unsigned char current_node_id = 0;
 
 std::vector<std::vector<float>> parsedCsv;
 File myFile;
-unsigned char columns = 13;
+const unsigned char NUMBER_OF_COLUMNS = 13;
+const int NUMBER_OF_TREES = 100;
+const int SAMPLE_SIZE = 256;
 
 void setup()
 {
@@ -61,7 +63,7 @@ void setup()
     int i = 1;
     std::vector<float> parsedRow;
     parsedRow.push_back(std::stof(strtokIndx));
-    while (i < columns)
+    while (i < NUMBER_OF_COLUMNS)
     {
       strtokIndx = strtok(NULL, ",");
       parsedRow.push_back(std::stof(strtokIndx));
@@ -98,30 +100,6 @@ BidiIter random_unique(BidiIter begin, BidiIter end, size_t num_random)
     --left;
   }
   return begin;
-}
-
-int next_tree_id_left(std::vector<Node> tree, int temp_id)
-{
-  int key = tree[temp_id].decision_node.child_left;
-  for (size_t k = 0; k < tree.size(); k++)
-  {
-    if (tree[k].node_id == key)
-    {
-      return k;
-    }
-  }
-}
-
-int next_tree_id_right(std::vector<Node> tree, int temp_id)
-{
-  int key = tree[temp_id].decision_node.child_right;
-  for (size_t k = 0; k < tree.size(); k++)
-  {
-    if (tree[k].node_id == key)
-    {
-      return k;
-    }
-  }
 }
 
 std::vector<float> path_length(std::vector<Node> tree, std::vector<std::vector<float>> parsedCsv)
@@ -259,7 +237,7 @@ class iForest
     void fit(std::vector<std::vector<float>> dataSet)
     {
       std::vector<std::vector<float>> dataSet_ = dataSet;
-      float testing [dataSet.size()] = {0};
+      float path_lengths [dataSet.size()] = {0};
       std::vector<float> average_paths;
       int height_limit = (int)ceil(log2(this->sample_size));
 
@@ -277,7 +255,7 @@ class iForest
 
         for (size_t j = 0; j < lengths.size(); j++)
         {
-          testing[j] = testing[j] + lengths[j];
+          path_lengths[j] = path_lengths[j] + lengths[j];
         }
         current_node_id = 0;
         std::vector<Node>().swap(node_stack);
@@ -285,15 +263,15 @@ class iForest
 
       for (size_t j = 0; j < dataSet_.size(); j++)
       {
-        testing[j] = testing[j] / 100;
+        path_lengths[j] = path_lengths[j] / NUMBER_OF_TREES;
       }
-      anomaly_scores = decision_function(testing, dataSet_);
+      anomaly_scores = decision_function(path_lengths, dataSet_);
     };
 };
 
 void loop()
 {
-  iForest clf = iForest(100, 256);
+  iForest clf = iForest(NUMBER_OF_TREES, SAMPLE_SIZE);
 
   clf.fit(parsedCsv);
   for (size_t i = 0; i < clf.anomaly_scores.size(); i++)
