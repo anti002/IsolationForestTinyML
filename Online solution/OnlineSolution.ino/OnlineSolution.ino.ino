@@ -37,7 +37,7 @@ unsigned char current_node_id = 0;
 
 std::vector<std::vector<float>> parsedCsv;
 File myFile;
-const unsigned char NUMBER_OF_COLUMNS = 13;
+const unsigned char NUMBER_OF_COLUMNS = 7;
 const int NUMBER_OF_TREES = 100;
 const int SAMPLE_SIZE = 256;
 
@@ -46,14 +46,16 @@ void setup()
   Serial.begin(9600);
   delay(5000);
   Serial.println("Initializing SD card...");
+  randomSeed(300);
 
   if (!SD.begin(10))
   {
   }
 
-  myFile = SD.open("test.csv", FILE_READ);
+  myFile = SD.open("ecoli.csv", FILE_READ);
   while (myFile.available())
   {
+    Serial.print("SD card initialized");
     String list = myFile.readStringUntil('\n');
 
     char tab2[1024];
@@ -150,9 +152,16 @@ std::vector<float> path_length(std::vector<Node> tree, std::vector<std::vector<f
 std::vector<float> decision_function(float average_length[], std::vector<std::vector<float>> parsedCsv)
 {
   std::vector<float> scores;
-  for (size_t i = 0; i < 129; i++)
+  for (size_t i = 0; i < parsedCsv.size(); i++)
   {
-    scores.push_back(0.5 - pow(2, (-1 * average_length[i]) / c(parsedCsv.size())));
+    if (parsedCsv.size() < SAMPLE_SIZE)
+    {
+      scores.push_back(0.5 - pow(2, (-1 * average_length[i]) / c(parsedCsv.size())));
+    }
+    else
+    {
+      scores.push_back(0.5 - pow(2, (-1 * average_length[i]) / c(SAMPLE_SIZE)));
+    }
   }
   return scores;
 }
@@ -280,5 +289,6 @@ void loop()
   }
   while (true)
   {
+    
   }
 }
