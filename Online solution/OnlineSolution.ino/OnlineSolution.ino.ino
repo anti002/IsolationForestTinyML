@@ -5,6 +5,7 @@
 #include <SD.h>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -37,7 +38,7 @@ unsigned char current_node_id = 0;
 
 std::vector<std::vector<float>> parsedCsv;
 File myFile;
-const unsigned char NUMBER_OF_COLUMNS = 7;
+const unsigned char NUMBER_OF_COLUMNS = 13;
 const int NUMBER_OF_TREES = 100;
 const int SAMPLE_SIZE = 256;
 
@@ -52,7 +53,7 @@ void setup()
   {
   }
 
-  myFile = SD.open("ecoli.csv", FILE_READ);
+  myFile = SD.open("wine.csv", FILE_READ);
   while (myFile.available())
   {
     Serial.print("SD card initialized");
@@ -87,6 +88,22 @@ float c(float size)
     return 1;
   }
   return 0;
+}
+
+float get_split(std::vector<std::vector<float>> data, int q_value)
+{
+  std::vector<float> x_values;
+  for (size_t i = 0; i < data.size(); i++)
+  {
+    x_values.push_back(data[i][q_value]);
+  }
+
+  float min = *min_element(x_values.begin(), x_values.end());
+  float max = *max_element(x_values.begin(), x_values.end());
+
+  float split_value = (rand() / ((double)RAND_MAX + 1) * (max - min) + min);
+
+  return split_value;
 }
 
 template<class BidiIter >
@@ -199,7 +216,7 @@ class iTree
         current_node.isLeaf = false;
         DecisionNode decision_node;
         decision_node.q_value = rand() % sub_sample[0].size();
-        decision_node.x_value = sub_sample[rand() % sub_sample.size()][decision_node.q_value];
+        decision_node.x_value = get_split(sub_sample, decision_node.q_value);
         current_node.decision_node = decision_node;
         current_node.node_id = current_node_id;
         current_node_id++;
@@ -289,6 +306,6 @@ void loop()
   }
   while (true)
   {
-    
+
   }
 }
