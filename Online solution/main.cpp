@@ -59,7 +59,7 @@ float c(float size)
 std::vector<std::vector<float>> parseCSV()
 {   
     std::vector<std::vector<float>> parsedCsv;
-    std::ifstream data("C:\\Users\\anton\\OneDrive\\Skrivbord\\Thesis_Code\\IsolationForestTinyML\\DatSets\\breastw.csv");
+    std::ifstream data("C:\\Users\\anton\\OneDrive\\Skrivbord\\Thesis_Code\\IsolationForestTinyML\\DatSets\\glass.csv");
     std::string line;
     while(std::getline(data,line))
     {
@@ -108,7 +108,6 @@ class iTree
     
     Node fit(std::vector<std::vector<float>> sub_sample)
     {
-        
         Node current_node;
         if (current_height >= height_limit || sub_sample.size() <= 1)
         {   
@@ -147,40 +146,33 @@ class iTree
                 }
             }
         
-            if (data_left.size() != 0)
-            {
+            
                 iTree left_subtree = iTree(this->current_height + 1, this->height_limit);
                 Node left_node = left_subtree.fit(data_left);
                 current_node.decision_node.child_left = left_node.node_id;
-            }
             
-            if (data_right.size() != 0)
-            {
+            
+            
                 iTree right_subtree = iTree(this->current_height + 1, this->height_limit);
                 Node right_node = right_subtree.fit(data_right);
                 current_node.decision_node.child_right = right_node.node_id;
-            }
             
+            std::cout << "+";            
             node_stack.push_back(current_node);
             return current_node;
         }
     };
 };
 
-/*
-    Methood used for taking a random sub sample from the data set
-*/
-template<class BidiIter >
-BidiIter random_unique(BidiIter begin, BidiIter end, size_t num_random) {
-    size_t left = std::distance(begin, end);
-    while (num_random--) {
-        BidiIter r = begin;
-        std::advance(r, rand()%left);
-        std::swap(*begin, *r);
-        ++begin;
-        --left;
+std::vector<std::vector<float>> random_unique(std::vector<std::vector<float>> data, int sample)
+{
+    std::vector<std::vector<float>> sub_sample;
+    for (size_t i = 0; i < sample; i++)
+    {
+        int random = rand() % data.size();
+        sub_sample.push_back(data[random]);
     }
-    return begin;
+    return sub_sample;
 }
 
 int next_tree_id_left(std::vector<Node> tree, int temp_id)
@@ -266,7 +258,7 @@ class iForest
 
     void fit(std::vector<std::vector<float>> dataSet)
     {
-        std::vector<std::vector<float>> dataSet_ = dataSet;
+        //std::vector<std::vector<float>> dataSet_ = dataSet;
         float path_sum [dataSet.size()] = {0};
         int height_limit = (int)ceil(log2(this->sample_size));
         
@@ -276,11 +268,10 @@ class iForest
         }
         for (size_t i = 0; i < t_trees; i++)
         {
-            random_unique(dataSet.begin(), dataSet.end(), this->sample_size);
+            std::vector<std::vector<float>> sub_sample = random_unique(dataSet, this->sample_size);
             iTree tree = iTree(0, height_limit);
-            Node root = tree.fit(dataSet_);
-            std::vector<float> lengths = path_length(node_stack, dataSet_);
-            
+            Node root = tree.fit(sub_sample);
+            std::vector<float> lengths = path_length(node_stack, dataSet);
             for (size_t j = 0; j < lengths.size(); j++)
             {
                 path_sum[j] = path_sum[j] + lengths[j];
@@ -289,11 +280,11 @@ class iForest
             std::vector<Node>().swap(node_stack);
         }
                   
-        for (size_t j = 0; j < dataSet_.size(); j++)
+        for (size_t j = 0; j < dataSet.size(); j++)
         {
             path_sum[j] = path_sum[j]/NUMBER_OF_TREES;
         }
-        anomaly_scores = decision_function(path_sum, dataSet_);
+        anomaly_scores = decision_function(path_sum, dataSet);
     };    
 };
 
