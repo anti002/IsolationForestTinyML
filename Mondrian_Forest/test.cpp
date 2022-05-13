@@ -6,6 +6,7 @@
 #include <sstream>
 #include <algorithm>
 #include <random>
+#include <map>
 
 using namespace std;
 
@@ -62,23 +63,79 @@ float exponential_dist(float lamda)
 {
     std::default_random_engine generator;
     std::exponential_distribution<double> distribution(lamda);
-
-    return distribution(generator);
-    
+    int randLoops = rand() % 1000;
+    int i = 0;
+    while (i < randLoops)
+    {
+        distribution(generator);
+        i++;
+    }
+    return distribution(generator);    
 }
 
 int main()
 {
-    srand(125);
-    Node j;
-    j.child_left_id = 82;
-    Tree.push_back(j);
-    std::vector<std::vector<float>> data = parseCSV();
 
-    data = random_unique(data, 256);
 
-    float E = exponential_dist(0.5);
-    std::cout << E << std::endl;
+    std::vector<std::vector<float>> data;
+    data.push_back({1,2,3,4,5,6});
+    data.push_back({1323,422,533,44,5,436});
+    data.push_back({154234,2,35452,4,5,66});
+    data.push_back({761,2,31324,4,6435,64674});
+    data.push_back({154,652,983,476,564,766});
+
+    std::vector<float> instance;
+    instance.push_back(0);
+    instance.push_back(532);
+    instance.push_back(421);
+    instance.push_back(50);
+    instance.push_back(103);
+    instance.push_back(502);
+    float e_l = 0;
+    float e_u = 0;
+    
+    for (size_t i = 0; i < instance.size(); i++)
+    {
+        for (size_t j = 0; j < data.size(); j++)
+        {
+            float min = 0;
+            float max = 0;
+            if (data[j][i] - instance[i] > 0)
+            {
+                min = data[j][i];
+            }
+
+            if (instance[i] - data[j][i] > 0)
+            {
+                max = data[j][i];
+            }
+            e_l += min;
+            e_u += max;
+        }
+    }
+    
+    //Line 2
+    float lamda = e_l + e_u;
+    float E = exponential_dist(lamda);
+    std::vector<int> weights;
+    
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(0.0, 1.0);
+    float pick = dis(gen);
+
+    if (0 <= pick < (node.u_d[0] + node.l_d[0]))
+    {
+        return 0;
+    }
+    for (size_t i = 1; i < node.u_d.size(); i++)
+    {
+        if ((node.u_d[i-1] + node.l_d[i-1]) < pick < (node.u_d[i] + node.l_d[i]))
+        {
+            return i;
+        }
+    }
+    return 0;
 }
 
 
