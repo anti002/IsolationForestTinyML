@@ -1,1 +1,3 @@
-j.right_block[0][0]
+
+        j.child_left_id = -1;
+        j.child_right_id = -1;

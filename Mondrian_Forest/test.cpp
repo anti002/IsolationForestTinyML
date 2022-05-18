@@ -31,7 +31,7 @@ std::vector<Node> Tree;
 std::vector<std::vector<float>> parseCSV()
 {   
     std::vector<std::vector<float>> parsedCsv;
-    std::ifstream data("C:\\Users\\anton\\OneDrive\\Skrivbord\\Thesis_Code\\IsolationForestTinyML\\DatSets\\breastw.csv");
+    std::ifstream data("C:\\Users\\anton\\OneDrive\\Skrivbord\\Thesis_Code\\IsolationForestTinyML\\DatSets\\glass.csv");
     std::string line;
     while(std::getline(data,line))
     {
@@ -73,67 +73,40 @@ float exponential_dist(float lamda)
     return distribution(generator);    
 }
 
-int main()
+std::vector<std::vector<float>> cleanDataset(std::vector<std::vector<float>> data)
 {
-
-
-    std::vector<std::vector<float>> data;
-    data.push_back({1,2,3,4,5,6});
-    data.push_back({1323,422,533,44,5,436});
-    data.push_back({154234,2,35452,4,5,66});
-    data.push_back({761,2,31324,4,6435,64674});
-    data.push_back({154,652,983,476,564,766});
-
-    std::vector<float> instance;
-    instance.push_back(0);
-    instance.push_back(532);
-    instance.push_back(421);
-    instance.push_back(50);
-    instance.push_back(103);
-    instance.push_back(502);
-    float e_l = 0;
-    float e_u = 0;
-    
-    for (size_t i = 0; i < instance.size(); i++)
+    for (size_t i = 0; i < data.size(); i++)
     {
+
         for (size_t j = 0; j < data.size(); j++)
         {
-            float min = 0;
-            float max = 0;
-            if (data[j][i] - instance[i] > 0)
+            if(i!=j)
             {
-                min = data[j][i];
-            }
-
-            if (instance[i] - data[j][i] > 0)
-            {
-                max = data[j][i];
-            }
-            e_l += min;
-            e_u += max;
+                if (data[i] == data[j])
+                {
+                    data.erase(data.begin() + j);
+                }
+            }    
         }
     }
-    
-    //Line 2
-    float lamda = e_l + e_u;
-    float E = exponential_dist(lamda);
-    std::vector<int> weights;
-    
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<> dis(0.0, 1.0);
-    float pick = dis(gen);
+    return data;
+}
 
-    if (0 <= pick < (node.u_d[0] + node.l_d[0]))
+
+int main()
+{
+    std::vector<std::vector<float>> hej;
+    std::vector<std::vector<float>> test = parseCSV();
+    std::cout << test.size() << std::endl;
+
+    test = cleanDataset(test);
+    std::cout << test.size() << std::endl;
+    hej.push_back({1.0,1.0,2.0});
+    hej.push_back({1.0,1.0,2.0});
+    hej.push_back({1.0,1.0,2.0});
+    if(hej[0] == hej[1])
     {
-        return 0;
-    }
-    for (size_t i = 1; i < node.u_d.size(); i++)
-    {
-        if ((node.u_d[i-1] + node.l_d[i-1]) < pick < (node.u_d[i] + node.l_d[i]))
-        {
-            return i;
-        }
+        std::cout << "a" << std::endl;
     }
     return 0;
 }
