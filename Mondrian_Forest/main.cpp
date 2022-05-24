@@ -11,13 +11,14 @@ using namespace std;
 
 struct Node
 {
-    std::vector<std::vector<float>> data, left_block, right_block;
+    std::vector<std::vector<float>> data;
     std::vector<float> l_d, u_d;
     bool leaf = false;
     float split_time, split_location;
     int id, parent_id, child_left_id, child_right_id, split_dimension;
 };
 
+std::vector<std::vector<Node>> Forest;
 std::vector<Node> Tree;
 
 
@@ -26,6 +27,9 @@ std::vector<Node> Tree;
 */
 int node_counter;
 int data_dim;
+const int NUMBER_OF_TREES = 100;
+const int SAMPLE_SIZE = 256;
+const float LIFE_TIME = 10;
 
 /*
     Takes a .CSV file and parses the rows into a vector of floats
@@ -147,12 +151,11 @@ void SampleMondrianBlock(Node j, float life_time, float t_parent)
         j.l_d.push_back(min);
         j.u_d.push_back(max);
     }
-    //Line 3 gör till C++ egna exp dist
+    //Line 3
 
     float E = exp_dist(lamda);
     
     //Line 4
-    //if (t_parent + E < life_time)
     if(j.data.size() > 1)
     {
         //Line 5
@@ -191,17 +194,7 @@ void SampleMondrianBlock(Node j, float life_time, float t_parent)
 
 
         //Line 8
-        for (size_t i = 0; i < j.data.size(); i++)
-        {
-            if(j.data[i][sample_dimension] <= split_location)
-            {
-                j.left_block.push_back(j.data[i]);
-            }
-            else
-            {
-                j.right_block.push_back(j.data[i]);
-            }
-        }
+        
         
         //Save node features
         j.split_dimension = sample_dimension;
@@ -215,7 +208,13 @@ void SampleMondrianBlock(Node j, float life_time, float t_parent)
         left_child.id = node_counter;
         j.child_left_id = left_child.id;
 
-        left_child.data = j.left_block;
+        for (size_t i = 0; i < j.data.size(); i++)
+        {
+            if(j.data[i][sample_dimension] <= split_location)
+            {
+                left_child.data.push_back(j.data[i]);
+            }
+        }
         left_child.parent_id = j.id;
         Tree[left_child.parent_id].child_left_id = left_child.id;
         
@@ -227,7 +226,13 @@ void SampleMondrianBlock(Node j, float life_time, float t_parent)
         right_child.id = node_counter;
         j.child_right_id = right_child.id;
         
-        right_child.data = j.right_block;
+        for (size_t i = 0; i < j.data.size(); i++)
+        {
+            if(j.data[i][sample_dimension] > split_location)
+            {
+                right_child.data.push_back(j.data[i]);
+            }
+        }
         right_child.parent_id = j.id;
         Tree[right_child.parent_id].child_right_id = right_child.id;
         SampleMondrianBlock(right_child, life_time, j.split_time);
@@ -288,7 +293,6 @@ void ExtendMondrianBlock(float life_time, Node node, std::vector<float> instance
     
     if(t_parent + E < node.split_time)
     {
-        std::cout << node.id << std::endl;
         //Line 4
         int split_dimension = get_dim(node, lamda);
         //Line 5
@@ -344,11 +348,6 @@ void ExtendMondrianBlock(float life_time, Node node, std::vector<float> instance
                     newParent.u_d.push_back(instance[i]);
                 }
             }
-
-
-
-
-        
 
         Node newLeaf;
         node_counter++;
@@ -445,45 +444,48 @@ int main()
     
     std::vector<float> last_row;
     last_row = parsedCsv[128];
-    std::cout << parsedCsv.size() << std::endl;
     parsedCsv.pop_back();
-    std::cout << parsedCsv.size() << std::endl;
 
-    SampleMondrianTree(3, data);
-    for (size_t i = 0; i < Tree.size(); i++)
+
+    for (size_t i = 0; i < NUMBER_OF_TREES; i++)
     {
-        std::cout << "Node id: " << Tree[i].id 
-                  << " Left child id: " << Tree[i].child_left_id 
-                  << " Right child id: " << Tree[i].child_right_id 
-                  << " Parent id: " << Tree[i].parent_id 
-                  << " Leaf: " << Tree[i].leaf 
-                  << " Data size " << Tree[i].data.size()
-                  << " Split dim: " << Tree[i].split_dimension 
-                  << " Split value: " << Tree[i].split_location 
-                  << " Split time: " << Tree[i].split_time
-                  << std::endl;
+        SampleMondrianTree(LIFE_TIME, parsedCsv);
+        Forest.push_back(Tree);
+        std::vector<Node>().swap(Tree);
     }
-
-    std::vector<float> instance;
-    instance.push_back(14.5);
-    instance.push_back(3.23);
-    instance.push_back(4.56);
-    instance.push_back(18.0);
-    instance.push_back(100);
-    /*instance.push_back(3.45);
-    instance.push_back(3.2);
-    instance.push_back(0.532);
-    instance.push_back(1.53);
-    instance.push_back(1.4);
-    instance.push_back(6.892);
-    instance.push_back(4.432);
-    instance.push_back(1);
-    instance.push_back(1421.032);*/
+     
+    for (size_t i = 0; i < Forest.size(); i++)
+    {
+        Tree = Forest[i];
+        ExtendMondrianTree(LIFE_TIME, last_row);
+        Forest[i] = Tree;
+        std::vector<Node>().swap(Tree);
+    }
     
-    ExtendMondrianTree(10, instance);
-    std::cout << "Extended" << std::endl;
+    
+    
+    for (size_t j = 0; j < Forest.size(); j++)
+    {
+        Tree = Forest[j];
+        for (size_t i = 0; i < Tree.size(); i++)
+        {
+        std::cout << "Node id: " << Tree[i].id 
+                  << " Left child id: " << Tree[i].child_left_id 
+                  << " Right child id: " << Tree[i].child_right_id 
+                  << " Parent id: " << Tree[i].parent_id 
+                  << " Leaf: " << Tree[i].leaf 
+                  << " Data size " << Tree[i].data.size()
+                  << " Split dim: " << Tree[i].split_dimension 
+                  << " Split value: " << Tree[i].split_location 
+                  << " Split time: " << Tree[i].split_time
+                  << std::endl;
+        }
+    }
+    
+    
+    
 
-    for (size_t i = 0; i < Tree.size(); i++)
+    /*for (size_t i = 0; i < Tree.size(); i++)
     {
         std::cout << "Node id: " << Tree[i].id 
                   << " Left child id: " << Tree[i].child_left_id 
@@ -495,5 +497,5 @@ int main()
                   << " Split value: " << Tree[i].split_location 
                   << " Split time: " << Tree[i].split_time
                   << std::endl;
-    }
+    }*/
 }
