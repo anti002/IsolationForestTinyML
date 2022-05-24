@@ -38,7 +38,7 @@ const float LIFE_TIME = 10;
 std::vector<std::vector<float>> parseCSV()
 {   
     std::vector<std::vector<float>> parsedCsv;
-    std::ifstream data("C:\\Users\\anton\\OneDrive\\Skrivbord\\Thesis_Code\\IsolationForestTinyML\\DatSets\\wine.csv");
+    std::ifstream data("C:\\Users\\anton\\OneDrive\\Skrivbord\\Thesis_Code\\IsolationForestTinyML\\DatSets\\glass.csv");
     std::string line;
     while(std::getline(data,line))
     {
@@ -117,6 +117,95 @@ int get_dim(Node node, float lamda)
             return i;
         }
     }
+}
+
+float c(float size)
+{
+    if (size > 2)
+    {
+        float temp = (2. * (log(size -1.) + 0.5772156649)) - (2.*(size-1.)/size);
+        return temp;
+    }
+    if (size == 2)
+    {
+        return 1;
+    }
+    return 0;
+}
+
+int find_node_pos(std::vector<Node> tree, Node current_node, bool left)
+{
+    for (size_t i = 0; i < tree.size(); i++)
+    {
+        if (tree[i].id == current_node.child_left_id && left)
+        {
+            return i;
+        }
+
+        if (tree[i].id == current_node.child_right_id && !left)
+        {
+            return i;
+        } 
+    }  
+}
+
+std::vector<float> path_length(std::vector<vector<Node>> forest, std::vector<std::vector<float>> parsedCsv)
+{
+    std::vector<float> edges;
+    for (size_t i = 0; i < parsedCsv.size(); i++)
+    {
+        float avg = 0;
+        float avg_depth = 0;
+        for (size_t j = 0; j < forest.size(); j++)
+        {
+            std::vector<Node> tree = forest[j];
+            int current_node_pos = 0;
+            int length = 0;
+            
+            while (length == 0 || !tree[current_node_pos].leaf)
+            {
+                float splitValue_attribute = parsedCsv[i][tree[current_node_pos].split_dimension];
+                float splitValue_node = tree[current_node_pos].split_location;
+                if (splitValue_attribute < splitValue_node)
+                {
+                    current_node_pos = find_node_pos(tree, tree[current_node_pos], true);
+                    length += 1;
+                }
+                else
+                {
+                    current_node_pos = find_node_pos(tree, tree[current_node_pos], false);
+                    length += 1;
+                }
+            }
+            float leaf_size = tree[current_node_pos].data.size();
+            float path_length = length + c(leaf_size);
+            avg += path_length;
+        }
+
+        float average_path = avg/forest.size();
+        edges.push_back(average_path);
+    }
+    return edges;
+}
+
+
+std::vector<float> decision_function(std::vector<vector<Node>> forest, std::vector<std::vector<float>> parsedCsv)
+{
+    std::vector<float> scores;
+    float score = 0;
+    std::vector<float> average_length = path_length(forest, parsedCsv);
+    for (size_t i = 0; i < parsedCsv.size(); i++)
+    {
+        if (parsedCsv.size() <= SAMPLE_SIZE)
+        {
+            scores.push_back(0.5 - pow(2, (-1 * average_length[i])/c(parsedCsv.size())));
+        }
+        else
+        {
+            scores.push_back(0.5 - pow(2, (-1 * average_length[i])/c(SAMPLE_SIZE)));
+        }
+    }
+    return scores;
 }
 
 /*
@@ -443,8 +532,8 @@ int main()
     
     
     std::vector<float> last_row;
-    last_row = parsedCsv[128];
-    parsedCsv.pop_back();
+    //last_row = parsedCsv[128];
+    //parsedCsv.pop_back();
 
 
     for (size_t i = 0; i < NUMBER_OF_TREES; i++)
@@ -454,17 +543,17 @@ int main()
         std::vector<Node>().swap(Tree);
     }
      
-    for (size_t i = 0; i < Forest.size(); i++)
+    /*for (size_t i = 0; i < Forest.size(); i++)
     {
         Tree = Forest[i];
         ExtendMondrianTree(LIFE_TIME, last_row);
         Forest[i] = Tree;
         std::vector<Node>().swap(Tree);
     }
+    */
     
     
-    
-    for (size_t j = 0; j < Forest.size(); j++)
+    /*for (size_t j = 0; j < Forest.size(); j++)
     {
         Tree = Forest[j];
         for (size_t i = 0; i < Tree.size(); i++)
@@ -480,8 +569,13 @@ int main()
                   << " Split time: " << Tree[i].split_time
                   << std::endl;
         }
+    }*/
+    //parsedCsv.push_back(last_row);
+    std::vector<float> anomalyScores = decision_function(Forest, parsedCsv);
+    for (size_t i = 0; i < anomalyScores.size(); i++)
+    {
+        std::cout << anomalyScores[i] << std::endl;
     }
-    
     
     
 
