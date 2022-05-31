@@ -13,7 +13,6 @@ using namespace std;
 struct Node
 {
   std::vector<std::vector<float>> data;
-  //std::vector<float> l_d, u_d;
   float lower_val_dim[13];
   float upper_val_dim[13];
   bool leaf = false;
@@ -144,11 +143,13 @@ unsigned char get_dim(Node node, float lamda)
     Mondrian implementation
 */
 //Algorithm 2
-void SampleMondrianBlock(Node j, float life_time, float t_parent)
+void SampleMondrianBlock(Node & j, float life_time, float t_parent)
 {
   //Line 1
   //Line 2
   node_ammount++;
+  Serial.println(node_ammount);
+   Serial.println(data_dim);
   float lamda = 0;
   float min = 0;
   float max = 0;
@@ -232,6 +233,7 @@ void SampleMondrianBlock(Node j, float life_time, float t_parent)
     left_child.id = node_counter;
     j.child_left_id = left_child.id;
 
+    std::vector<std::vector<float>> temp;
     for (size_t i = 0; i < j.data.size(); i++)
     {
       if (j.data[i][sample_dimension] <= split_location)
@@ -239,31 +241,35 @@ void SampleMondrianBlock(Node j, float life_time, float t_parent)
         left_child.data.emplace_back(j.data[i]);
       }
     }
-    left_child.parent_id = j.id;
-    Tree[left_child.parent_id].child_left_id = left_child.id;
-    Serial.println(sizeof(j));
-
-    SampleMondrianBlock(left_child, life_time, j.split_time);
-
-    //Line10
-    Node right_child;
-    node_counter++;
-    right_child.id = node_counter;
-    j.child_right_id = right_child.id;
 
     for (size_t i = 0; i < j.data.size(); i++)
     {
       if (j.data[i][sample_dimension] > split_location)
       {
-        right_child.data.emplace_back(j.data[i]);
+        temp.emplace_back(j.data[i]);
       }
     }
+
+    std::vector<std::vector<float>>().swap(j.data);
+    
+    left_child.parent_id = j.id;
+    Tree[left_child.parent_id].child_left_id = left_child.id;
+
+    SampleMondrianBlock(left_child, life_time, j.split_time);
+    std::vector<std::vector<float>>().swap(left_child.data);
+
+    //Line10
+    Node right_child;
+    node_counter++;
+    right_child.data = temp;
+    std::vector<std::vector<float>>().swap(temp);
+    right_child.id = node_counter;
+    j.child_right_id = right_child.id;
 
     right_child.parent_id = j.id;
     Tree[right_child.parent_id].child_right_id = right_child.id;
     SampleMondrianBlock(right_child, life_time, j.split_time);
-    std::vector<std::vector<float>>().swap(j.data);
-    std::vector<std::vector<float>>().swap(left_child.data);
+    //std::vector<std::vector<float>>().swap(j.data);
     std::vector<std::vector<float>>().swap(right_child.data);
 
   }
@@ -455,6 +461,8 @@ void ExtendMondrianTree(float life_time, std::vector<float> instance)
 void loop() {
   // put your main code here, to run repeatedly:
   //parsedCsv = cleanDataset(parsedCsv);
+  Node n;
+  Serial.println(sizeof(n));
 
   for (size_t i = 0; i < NUMBER_OF_TREES; i++)
   {

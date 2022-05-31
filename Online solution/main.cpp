@@ -59,7 +59,7 @@ float c(float size)
 std::vector<std::vector<float>> parseCSV()
 {   
     std::vector<std::vector<float>> parsedCsv;
-    std::ifstream data("C:\\Users\\anton\\OneDrive\\Skrivbord\\Thesis_Code\\IsolationForestTinyML\\DatSets\\mnist.csv");
+    std::ifstream data("C:\\Users\\anton\\OneDrive\\Skrivbord\\Thesis_Code\\IsolationForestTinyML\\DatSets\\wbc.csv");
     std::string line;
     while(std::getline(data,line))
     {
@@ -75,7 +75,6 @@ std::vector<std::vector<float>> parseCSV()
     }
     return parsedCsv;
 };
-
 
 float get_split(std::vector<std::vector<float>> data, int q_value)
 {
@@ -262,7 +261,6 @@ class iForest
 
     void fit(std::vector<std::vector<float>> dataSet)
     {
-        //std::vector<std::vector<float>> dataSet_ = dataSet;
         float path_sum [dataSet.size()] = {0};
         int height_limit = (int)ceil(log2(this->sample_size));
         
@@ -294,7 +292,9 @@ class iForest
 
 int main()
 {
+
     std::vector<std::vector<float>> parsedCsv = parseCSV();
+    
     std::cout << parsedCsv.size() << std::endl;
 
 

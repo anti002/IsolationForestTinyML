@@ -15,7 +15,7 @@ struct Node
     std::vector<float> l_d, u_d;
     bool leaf = false;
     float split_time, split_location;
-    int id, parent_id, child_left_id, child_right_id, split_dimension;
+    int id, parent_id, child_left_id, child_right_id, split_dimension, size;
 };
 
 std::vector<std::vector<Node>> Forest;
@@ -27,7 +27,7 @@ std::vector<Node> Tree;
 */
 int node_counter;
 int data_dim;
-const int NUMBER_OF_TREES = 100;
+const int NUMBER_OF_TREES = 1;
 const int SAMPLE_SIZE = 256;
 const float LIFE_TIME = 10;
 
@@ -38,7 +38,7 @@ const float LIFE_TIME = 10;
 std::vector<std::vector<float>> parseCSV()
 {   
     std::vector<std::vector<float>> parsedCsv;
-    std::ifstream data("C:\\Users\\anton\\OneDrive\\Skrivbord\\Thesis_Code\\IsolationForestTinyML\\DatSets\\glass.csv");
+    std::ifstream data("C:\\Users\\anton\\OneDrive\\Skrivbord\\Thesis_Code\\IsolationForestTinyML\\DatSets\\wine.csv");
     std::string line;
     while(std::getline(data,line))
     {
@@ -47,10 +47,10 @@ std::vector<std::vector<float>> parseCSV()
         std::vector<float> parsedRow;
         while(std::getline(lineStream,cell,','))
         {
-            parsedRow.push_back(std::stof(cell));
+            parsedRow.emplace_back(std::stof(cell));
         }
 
-        parsedCsv.push_back(parsedRow);
+        parsedCsv.emplace_back(parsedRow);
     }
     return parsedCsv;
 };
@@ -107,7 +107,7 @@ int get_dim(Node node, float lamda)
     std::uniform_real_distribution<> dis(0.0, 1.0);
     float pick = dis(gen);
     
-    float limit;
+    float limit = 0;
 
     for (size_t i = 0; i < node.l_d.size(); i++)
     {
@@ -117,6 +117,14 @@ int get_dim(Node node, float lamda)
             return i;
         }
     }
+}
+
+float get_split_location(float lower, float upper)
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(lower, upper);
+    return dis(gen);;
 }
 
 float c(float size)
@@ -133,7 +141,7 @@ float c(float size)
     return 0;
 }
 
-int find_node_pos(std::vector<Node> tree, Node current_node, bool left)
+int find_node_pos(const std::vector<Node> & tree, const Node & current_node, bool left)
 {
     for (size_t i = 0; i < tree.size(); i++)
     {
@@ -177,13 +185,15 @@ std::vector<float> path_length(std::vector<vector<Node>> forest, std::vector<std
                     length += 1;
                 }
             }
-            float leaf_size = tree[current_node_pos].data.size();
+            
+            float leaf_size = tree[current_node_pos].size;
             float path_length = length + c(leaf_size);
+            
             avg += path_length;
         }
 
         float average_path = avg/forest.size();
-        edges.push_back(average_path);
+        edges.emplace_back(average_path);
     }
     return edges;
 }
@@ -198,11 +208,11 @@ std::vector<float> decision_function(std::vector<vector<Node>> forest, std::vect
     {
         if (parsedCsv.size() <= SAMPLE_SIZE)
         {
-            scores.push_back(0.5 - pow(2, (-1 * average_length[i])/c(parsedCsv.size())));
+            scores.emplace_back(0.5 - pow(2, (-1 * average_length[i])/c(parsedCsv.size())));
         }
         else
         {
-            scores.push_back(0.5 - pow(2, (-1 * average_length[i])/c(SAMPLE_SIZE)));
+            scores.emplace_back(0.5 - pow(2, (-1 * average_length[i])/c(SAMPLE_SIZE)));
         }
     }
     return scores;
@@ -219,6 +229,10 @@ void SampleMondrianBlock(Node j, float life_time, float t_parent)
     float lamda = 0;
     float min = 0;
     float max = 0;
+    j.size = j.data.size();
+
+    j.u_d.reserve(j.data[0].size());
+    j.l_d.reserve(j.data[0].size());
     
     for (size_t i = 0; i < data_dim; i++)
     {
@@ -237,8 +251,8 @@ void SampleMondrianBlock(Node j, float life_time, float t_parent)
 
         }
         lamda += (max - min);
-        j.l_d.push_back(min);
-        j.u_d.push_back(max);
+        j.l_d.emplace_back(min);
+        j.u_d.emplace_back(max);
     }
     //Line 3
 
@@ -275,21 +289,17 @@ void SampleMondrianBlock(Node j, float life_time, float t_parent)
                 }
             }
         }
-        
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_real_distribution<> dis(lower, upper);
-        float split_location = dis(gen);
+        float split_location = get_split_location(lower, upper); 
 
 
         //Line 8
         
         
-        //Save node features
+        //Save node attributes
         j.split_dimension = sample_dimension;
         j.split_location = split_location;
         
-        Tree.push_back(j);
+        Tree.emplace_back(j);
         
         //Line 9
         Node left_child;
@@ -301,7 +311,7 @@ void SampleMondrianBlock(Node j, float life_time, float t_parent)
         {
             if(j.data[i][sample_dimension] <= split_location)
             {
-                left_child.data.push_back(j.data[i]);
+                left_child.data.emplace_back(j.data[i]);
             }
         }
         left_child.parent_id = j.id;
@@ -319,12 +329,16 @@ void SampleMondrianBlock(Node j, float life_time, float t_parent)
         {
             if(j.data[i][sample_dimension] > split_location)
             {
-                right_child.data.push_back(j.data[i]);
+                right_child.data.emplace_back(j.data[i]);
             }
         }
+
         right_child.parent_id = j.id;
         Tree[right_child.parent_id].child_right_id = right_child.id;
         SampleMondrianBlock(right_child, life_time, j.split_time);
+        std::vector<std::vector<float>>().swap(j.data);
+        std::vector<std::vector<float>>().swap(left_child.data);
+        std::vector<std::vector<float>>().swap(right_child.data);
         
     }
     else
@@ -335,7 +349,7 @@ void SampleMondrianBlock(Node j, float life_time, float t_parent)
         j.child_left_id = -1;
         j.child_right_id = -1;
         j.id = node_counter;
-        Tree.push_back(j);
+        Tree.emplace_back(j);
     }
 }
 
@@ -390,13 +404,11 @@ void ExtendMondrianBlock(float life_time, Node node, std::vector<float> instance
         float split_location;
         if (instance[node.split_dimension] > node.u_d[node.split_dimension])
         {
-            std::uniform_real_distribution<> dis(node.u_d[node.split_dimension], instance[node.split_dimension]);
-            split_location = dis(gen);
+            split_location = get_split_location(node.u_d[node.split_dimension], instance[node.split_dimension]);
         }
         else
         {
-            std::uniform_real_distribution<> dis(instance[node.split_dimension], node.l_d[node.split_dimension]);
-            split_location = dis(gen);
+            split_location = get_split_location(instance[node.split_dimension], node.l_d[node.split_dimension]);
         }
         
         //Line 6
@@ -421,20 +433,20 @@ void ExtendMondrianBlock(float life_time, Node node, std::vector<float> instance
             {
                 if (node.l_d[i] < instance[i])
                 {
-                    newParent.l_d.push_back(node.l_d[i]);
+                    newParent.l_d.emplace_back(node.l_d[i]);
                 }
                 else
                 {
-                    newParent.l_d.push_back(instance[i]);
+                    newParent.l_d.emplace_back(instance[i]);
                 }
 
                 if (node.u_d[i] > instance[i])
                 {
-                    newParent.u_d.push_back(node.u_d[i]);
+                    newParent.u_d.emplace_back(node.u_d[i]);
                 }
                 else
                 {
-                    newParent.u_d.push_back(instance[i]);
+                    newParent.u_d.emplace_back(instance[i]);
                 }
             }
 
@@ -444,7 +456,7 @@ void ExtendMondrianBlock(float life_time, Node node, std::vector<float> instance
         newLeaf.leaf = true;
         newLeaf.parent_id = newParent.id;
 
-        newLeaf.data.push_back(instance);
+        newLeaf.data.emplace_back(instance);
 
         if (instance[newParent.split_dimension] < newParent.split_location)
         {
@@ -453,7 +465,7 @@ void ExtendMondrianBlock(float life_time, Node node, std::vector<float> instance
 
             Tree[newParent.parent_id].child_left_id = newParent.id;
 
-            Tree.push_back(newParent);
+            Tree.emplace_back(newParent);
             SampleMondrianBlock(newLeaf, life_time, t_parent);
         }
         else
@@ -463,7 +475,7 @@ void ExtendMondrianBlock(float life_time, Node node, std::vector<float> instance
 
             Tree[newParent.parent_id].child_right_id = newParent.id;
 
-            Tree.push_back(newParent);
+            Tree.emplace_back(newParent);
             SampleMondrianBlock(newLeaf, life_time, t_parent);
         }
     }
@@ -514,21 +526,22 @@ void ExtendMondrianTree(float life_time, std::vector<float> instance)
 
 int main()
 {
+
     std::vector<std::vector<float>> data;
     std::vector<std::vector<float>> parsedCsv = parseCSV();
     parsedCsv = cleanDataset(parsedCsv);
-    data.push_back({11, -11, 7, 4, 0});
-    data.push_back({8, -6, -5, -1, 4});
-    data.push_back({100, -5, -1, -12, 6});
-    data.push_back({-6, -18, 11, 15, -8});
-    /*data.push_back({-31, -22, 71, -40, -7});
-    data.push_back({-5, 34, 92, 76, 38});
-    data.push_back({-46, 33, 66, -31, -97});
-    data.push_back({-41, 79, -57, 63, 1});
-    data.push_back({60, 51, 91, 21, 62});
-    data.push_back({54, 35, -13, -48, -36});
-    data.push_back({51, 65, 13, -68, 36});
-    data.push_back({74, 85, 23, 28, 33});*/
+    /*data.emplace_back({11, -11, 7, 4, 0});
+    data.emplace_back({8, -6, -5, -1, 4});
+    data.emplace_back({100, -5, -1, -12, 6});
+    data.emplace_back({-6, -18, 11, 15, -8});
+    data.emplace_back({-31, -22, 71, -40, -7});
+    data.emplace_back({-5, 34, 92, 76, 38});
+    data.emplace_back({-46, 33, 66, -31, -97});
+    data.emplace_back({-41, 79, -57, 63, 1});
+    data.emplace_back({60, 51, 91, 21, 62});
+    data.emplace_back({54, 35, -13, -48, -36});
+    data.emplace_back({51, 65, 13, -68, 36});
+    data.emplace_back({74, 85, 23, 28, 33});*/
     
     
     std::vector<float> last_row;
@@ -539,7 +552,7 @@ int main()
     for (size_t i = 0; i < NUMBER_OF_TREES; i++)
     {
         SampleMondrianTree(LIFE_TIME, parsedCsv);
-        Forest.push_back(Tree);
+        Forest.emplace_back(Tree);
         std::vector<Node>().swap(Tree);
     }
      
@@ -553,7 +566,7 @@ int main()
     */
     
     
-    /*for (size_t j = 0; j < Forest.size(); j++)
+    for (size_t j = 0; j < Forest.size(); j++)
     {
         Tree = Forest[j];
         for (size_t i = 0; i < Tree.size(); i++)
@@ -569,8 +582,8 @@ int main()
                   << " Split time: " << Tree[i].split_time
                   << std::endl;
         }
-    }*/
-    //parsedCsv.push_back(last_row);
+    }
+    //parsedCsv.emplace_back(last_row);
     std::vector<float> anomalyScores = decision_function(Forest, parsedCsv);
     for (size_t i = 0; i < anomalyScores.size(); i++)
     {
