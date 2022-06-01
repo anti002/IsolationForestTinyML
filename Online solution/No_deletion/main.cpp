@@ -32,7 +32,7 @@ unsigned short int node_ammount = 0;
 std::vector<std::vector<float>> parseCSV()
 {   
     std::vector<std::vector<float>> parsedCsv;
-    std::ifstream data("C:\\Users\\anton\\OneDrive\\Skrivbord\\Thesis_Code\\IsolationForestTinyML\\DatSets\\wine.csv");
+    std::ifstream data("C:\\Users\\anton\\OneDrive\\Skrivbord\\Thesis_Code\\IsolationForestTinyML\\DatSets\\mnist.csv");
     std::string line;
     while(std::getline(data,line))
     {
@@ -48,7 +48,7 @@ std::vector<std::vector<float>> parseCSV()
     return parsedCsv;
 };
 
-std::vector<std::vector<float>> cleanDataset(std::vector<std::vector<float>>  data)
+std::vector<std::vector<float>> cleanDataset(std::vector<std::vector<float>> & data)
 {
     for (size_t i = 0; i < data.size(); i++)
     {
@@ -59,6 +59,7 @@ std::vector<std::vector<float>> cleanDataset(std::vector<std::vector<float>>  da
                 if (data[i] == data[j])
                 {
                 data.erase(data.begin() + j);
+                std::cout << "Cleaned row: " << i << std::endl;
                 }
             }
         }
@@ -66,7 +67,7 @@ std::vector<std::vector<float>> cleanDataset(std::vector<std::vector<float>>  da
     return data;
 }
 
-std::vector<std::vector<float>> random_unique(std::vector<std::vector<float>> data, int sample)
+std::vector<std::vector<float>> random_unique(const std::vector<std::vector<float>> & data, int sample)
 {
     std::vector<std::vector<float>> sub_sample;
     for (size_t i = 0; i < sample; i++)
@@ -115,7 +116,7 @@ int find_node_pos(const std::vector<Node> & tree, const Node & current_node, boo
     }  
 }
 
-float get_split(std::vector<std::vector<float>> data, int q_value)
+float get_split(const std::vector<std::vector<float>> & data, int q_value)
 {
     std::vector<float> x_values;
 
@@ -299,9 +300,7 @@ void SampleMondrianTree(std::vector<Node> & tree, std::vector<std::vector<float>
     {
         data = random_unique(data, SAMPLE_SIZE);
     }
-    std::cout << data.size() << std::endl;
     data = cleanDataset(data);
-    std::cout << data.size() << std::endl;
     Node root;
     node_counter = 0;
     root.id = node_counter;
@@ -313,34 +312,51 @@ void SampleMondrianTree(std::vector<Node> & tree, std::vector<std::vector<float>
 int main() 
 {
     std::vector<std::vector<float>> parsedCsv = parseCSV();
-    std::cout << parsedCsv.size() << std::endl;
     parsedCsv = cleanDataset(parsedCsv);
-    std::cout << parsedCsv.size() << std::endl;
-
-    for (size_t i = 0; i < NUMBER_OF_TREES; i++)
-    {   
-        std::cout << i << std::endl;
-        Forest.emplace_back();
-        SampleMondrianTree(Forest[i], parsedCsv);
-    }
-    
-    /*for (size_t j = 0; j < Forest.size(); j++)
+    int testparam = 0;
+    int n_tests = 10;
+    float scores[parsedCsv.size()] = {0};
+    while (testparam < n_tests)
     {
-        std::vector<Node> Tree = Forest[j];
-        for (size_t i = 0; i < Tree.size(); i++)
-        {
-        std::cout << "Node id: " << Tree[i].id 
-                  << " Left child id: " << Tree[i].child_left_id 
-                  << " Right child id: " << Tree[i].child_right_id 
-                  << " Leaf: " << Tree[i].leaf 
-                  << " Data size " << Tree[i].data.size()
-                  << std::endl;
+        std::cout << "Iter: " << testparam << std::endl;
+        std::cout << 1 << std::endl;
+        srand(time(0));
+        for (size_t i = 0; i < NUMBER_OF_TREES; i++)
+        {   
+            Forest.emplace_back();
+            SampleMondrianTree(Forest[i], parsedCsv);
         }
-    }*/
 
-    std::vector<float> anomalyScores = decision_function(Forest, parsedCsv);
-    for (size_t i = 0; i < anomalyScores.size(); i++)
-    {
-        std::cout << anomalyScores[i] << std::endl;
+        std::cout << 2 << std::endl;
+        std::vector<float> anomalyScores = decision_function(Forest, parsedCsv);
+        std::cout << 3 << std::endl;
+        for (size_t i = 0; i < anomalyScores.size(); i++)
+        {
+            scores[i] += anomalyScores[i]/n_tests;
+        }
+        std::cout << 4 << std::endl;
+        testparam++;
+        std::vector<std::vector<Node>>().swap(Forest);
     }
+
+
+    for (size_t i = 0; i < parsedCsv.size(); i++)
+    {
+        std::cout << scores[i] << std::endl;
+    }
+        
+        /*for (size_t j = 0; j < Forest.size(); j++)
+        {
+            std::vector<Node> Tree = Forest[j];
+            for (size_t i = 0; i < Tree.size(); i++)
+            {
+            std::cout << "Node id: " << Tree[i].id 
+                    << " Left child id: " << Tree[i].child_left_id 
+                    << " Right child id: " << Tree[i].child_right_id 
+                    << " Leaf: " << Tree[i].leaf 
+                    << " Data size " << Tree[i].data.size()
+                    << std::endl;
+            }
+        }*/
+    
 }
