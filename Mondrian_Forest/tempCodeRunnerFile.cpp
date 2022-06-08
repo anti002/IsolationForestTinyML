@@ -1,1 +1,1 @@
-cout
+random_unique

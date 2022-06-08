@@ -15,7 +15,7 @@ struct Node
     std::vector<float> l_d, u_d;
     bool leaf = false;
     float split_time, split_location;
-    int id, parent_id, child_left_id, child_right_id, split_dimension, size;
+    short int id, parent_id, child_left_id, child_right_id, split_dimension, size;
 };
 
 std::vector<std::vector<Node>> Forest;
@@ -25,11 +25,11 @@ std::vector<Node> Tree;
 /*
     Helper methods and variables
 */
-int node_counter;
-int data_dim;
-const int NUMBER_OF_TREES = 1;
-const int SAMPLE_SIZE = 256;
-const float LIFE_TIME = 10;
+unsigned int node_counter;
+char data_dim;
+const char NUMBER_OF_TREES = 100;
+const short int SAMPLE_SIZE = 256;
+const float LIFE_TIME = 1;
 
 /*
     Takes a .CSV file and parses the rows into a vector of floats
@@ -38,7 +38,7 @@ const float LIFE_TIME = 10;
 std::vector<std::vector<float>> parseCSV()
 {   
     std::vector<std::vector<float>> parsedCsv;
-    std::ifstream data("C:\\Users\\anton\\OneDrive\\Skrivbord\\Thesis_Code\\IsolationForestTinyML\\DatSets\\wine.csv");
+    std::ifstream data("C:\\Users\\anton\\OneDrive\\Skrivbord\\Thesis_Code\\IsolationForestTinyML\\DatSets\\ionosphere.csv");
     std::string line;
     while(std::getline(data,line))
     {
@@ -55,7 +55,32 @@ std::vector<std::vector<float>> parseCSV()
     return parsedCsv;
 };
 
-std::vector<std::vector<float>> cleanDataset(std::vector<std::vector<float>> data)
+/*
+    Method for taking random unique sub samples from data set
+*/
+std::vector<std::vector<float>> random_unique(const std::vector<std::vector<float>> & data, int sample)
+{
+    std::vector<std::vector<float>> sub_sample;
+    for (size_t i = 0; i < sample; i++)
+    {
+        int random = rand() % data.size();
+        sub_sample.push_back(data[random]);
+        for (size_t j = 0; j < sub_sample.size(); j++)
+        {
+            if (sub_sample[j] == data[random] && j != i)
+            {
+                sub_sample.pop_back();
+                i--;
+            }
+        }
+    }
+    return sub_sample;
+}
+
+/*
+    Method for cleaning the data set form identical instances
+*/
+std::vector<std::vector<float>> cleanDataset(std::vector<std::vector<float>> & data)
 {
     for (size_t i = 0; i < data.size(); i++)
     {
@@ -74,7 +99,10 @@ std::vector<std::vector<float>> cleanDataset(std::vector<std::vector<float>> dat
     return data;
 }
 
-Node findChild(std::vector<Node> tree, int child_id)
+/*
+    Method for finding the child of a node based in the id of the child
+*/
+Node findChild(const std::vector<Node> & tree, int child_id)
 {
     
     for (size_t i = 0; i < tree.size(); i++)
@@ -86,21 +114,20 @@ Node findChild(std::vector<Node> tree, int child_id)
     }  
 }
 
+/*
+    Method for getting a random value from the exponential distribution with the rate of lambda
+*/
 float exp_dist(float lamda)
 {
     std::default_random_engine generator;
     std::exponential_distribution<double> distribution(lamda);
-    int randLoops = rand() % 1000;
-    int i = 0;
-    while (i < randLoops)
-    {
-        distribution(generator);
-        i++;
-    }
     return distribution(generator);
 }
 
-int get_dim(Node node, float lamda)
+/*
+    Method for getting a random dimension with the probability based on upper and lower value of the dimensions
+*/
+int get_dim(Node & node, float lamda)
 {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -119,6 +146,9 @@ int get_dim(Node node, float lamda)
     }
 }
 
+/*
+    Method for getting a random split location
+*/
 float get_split_location(float lower, float upper)
 {
     std::random_device rd;
@@ -127,6 +157,9 @@ float get_split_location(float lower, float upper)
     return dis(gen);;
 }
 
+/*
+    Method for calculating the c(n)
+*/
 float c(float size)
 {
     if (size > 2)
@@ -141,6 +174,9 @@ float c(float size)
     return 0;
 }
 
+/*
+    Method for finding the location in the tree of the child node based on if we look for the left or right child
+*/
 int find_node_pos(const std::vector<Node> & tree, const Node & current_node, bool left)
 {
     for (size_t i = 0; i < tree.size(); i++)
@@ -157,7 +193,10 @@ int find_node_pos(const std::vector<Node> & tree, const Node & current_node, boo
     }  
 }
 
-std::vector<float> path_length(std::vector<vector<Node>> forest, std::vector<std::vector<float>> parsedCsv)
+/*
+    Method for calculating path length
+*/
+std::vector<float> path_length(const std::vector<vector<Node>> & forest, const std::vector<std::vector<float>> & parsedCsv)
 {
     std::vector<float> edges;
     for (size_t i = 0; i < parsedCsv.size(); i++)
@@ -199,7 +238,7 @@ std::vector<float> path_length(std::vector<vector<Node>> forest, std::vector<std
 }
 
 
-std::vector<float> decision_function(std::vector<vector<Node>> forest, std::vector<std::vector<float>> parsedCsv)
+std::vector<float> decision_function(const std::vector<vector<Node>> & forest, const std::vector<std::vector<float>> & parsedCsv)
 {
     std::vector<float> scores;
     float score = 0;
@@ -222,7 +261,7 @@ std::vector<float> decision_function(std::vector<vector<Node>> forest, std::vect
     Mondrian implementation
 */
 //Algorithm 2
-void SampleMondrianBlock(Node j, float life_time, float t_parent)
+void SampleMondrianBlock(Node & j, float life_time, float t_parent)
 {
     //Line 1
     //Line 2
@@ -356,6 +395,10 @@ void SampleMondrianBlock(Node j, float life_time, float t_parent)
 //Algorithm 1
 void SampleMondrianTree(float life_time, std::vector<std::vector<float>> data)
 {
+    if (data.size() > SAMPLE_SIZE)
+    {
+        data = random_unique(data, SAMPLE_SIZE);
+    }
     Node root;
     node_counter = 0;
     root.id = node_counter;
@@ -366,7 +409,7 @@ void SampleMondrianTree(float life_time, std::vector<std::vector<float>> data)
 }
 
 //Algorithm 4
-void ExtendMondrianBlock(float life_time, Node node, std::vector<float> instance, float t_parent)
+void ExtendMondrianBlock(float life_time, Node node, const std::vector<float> & instance, float t_parent)
 {
     //Line 1
     float e_l = 0;
@@ -426,9 +469,6 @@ void ExtendMondrianBlock(float life_time, Node node, std::vector<float> instance
         Tree[node.child_left_id].parent_id = newParent.id;
         Tree[node.child_right_id].parent_id = newParent.id;
         
-        //Fel, ska jämföras med instancen min(l_d, x), kan va löst med loopen
-        //newParent.l_d = node.l_d;
-        //newParent.u_d = node.u_d;
         for (size_t i = 0; i < instance.size(); i++)
             {
                 if (node.l_d[i] < instance[i])
@@ -519,7 +559,7 @@ void ExtendMondrianBlock(float life_time, Node node, std::vector<float> instance
 }
 
 //Algorithm 3
-void ExtendMondrianTree(float life_time, std::vector<float> instance)
+void ExtendMondrianTree(float life_time, std::vector<float> & instance)
 {
     ExtendMondrianBlock(life_time, Tree[0], instance, 0);
 }
@@ -530,67 +570,38 @@ int main()
     std::vector<std::vector<float>> data;
     std::vector<std::vector<float>> parsedCsv = parseCSV();
     parsedCsv = cleanDataset(parsedCsv);
-    /*data.emplace_back({11, -11, 7, 4, 0});
-    data.emplace_back({8, -6, -5, -1, 4});
-    data.emplace_back({100, -5, -1, -12, 6});
-    data.emplace_back({-6, -18, 11, 15, -8});
-    data.emplace_back({-31, -22, 71, -40, -7});
-    data.emplace_back({-5, 34, 92, 76, 38});
-    data.emplace_back({-46, 33, 66, -31, -97});
-    data.emplace_back({-41, 79, -57, 63, 1});
-    data.emplace_back({60, 51, 91, 21, 62});
-    data.emplace_back({54, 35, -13, -48, -36});
-    data.emplace_back({51, 65, 13, -68, 36});
-    data.emplace_back({74, 85, 23, 28, 33});*/
     
+    int testparam = 0;
+    int n_tests = 10;
+    float scores[parsedCsv.size()] = {0};
     
-    std::vector<float> last_row;
-    //last_row = parsedCsv[128];
-    //parsedCsv.pop_back();
-
-
-    for (size_t i = 0; i < NUMBER_OF_TREES; i++)
+    while (testparam < n_tests)
     {
-        SampleMondrianTree(LIFE_TIME, parsedCsv);
-        Forest.emplace_back(Tree);
-        std::vector<Node>().swap(Tree);
-    }
-     
-    /*for (size_t i = 0; i < Forest.size(); i++)
-    {
-        Tree = Forest[i];
-        ExtendMondrianTree(LIFE_TIME, last_row);
-        Forest[i] = Tree;
-        std::vector<Node>().swap(Tree);
-    }
-    */
-    
-    
-    for (size_t j = 0; j < Forest.size(); j++)
-    {
-        Tree = Forest[j];
-        for (size_t i = 0; i < Tree.size(); i++)
+        srand(time(0));
+        for (size_t i = 0; i < NUMBER_OF_TREES; i++)
         {
-        std::cout << "Node id: " << Tree[i].id 
-                  << " Left child id: " << Tree[i].child_left_id 
-                  << " Right child id: " << Tree[i].child_right_id 
-                  << " Parent id: " << Tree[i].parent_id 
-                  << " Leaf: " << Tree[i].leaf 
-                  << " Data size " << Tree[i].data.size()
-                  << " Split dim: " << Tree[i].split_dimension 
-                  << " Split value: " << Tree[i].split_location 
-                  << " Split time: " << Tree[i].split_time
-                  << std::endl;
+            SampleMondrianTree(LIFE_TIME, parsedCsv);
+            Forest.emplace_back(Tree);
+            std::vector<Node>().swap(Tree);
         }
+
+        std::cout << testparam + 1 << " Forests built" << std::endl;
+
+        std::vector<float> anomalyScores = decision_function(Forest, parsedCsv);
+        for (size_t i = 0; i < anomalyScores.size(); i++)
+        {
+            scores[i] += anomalyScores[i]/n_tests;
+        }
+        
+        std::cout << testparam + 1 << " Scores saved" << std::endl;
+        testparam++;
+        std::vector<std::vector<Node>>().swap(Forest);
     }
-    //parsedCsv.emplace_back(last_row);
-    std::vector<float> anomalyScores = decision_function(Forest, parsedCsv);
-    for (size_t i = 0; i < anomalyScores.size(); i++)
+    
+    for (size_t i = 0; i < parsedCsv.size(); i++)
     {
-        std::cout << anomalyScores[i] << std::endl;
+        std::cout << scores[i] << std::endl;
     }
-    
-    
 
     /*for (size_t i = 0; i < Tree.size(); i++)
     {
