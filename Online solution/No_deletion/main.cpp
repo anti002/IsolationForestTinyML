@@ -32,7 +32,7 @@ unsigned short int node_ammount = 0;
 std::vector<std::vector<float>> parseCSV()
 {   
     std::vector<std::vector<float>> parsedCsv;
-    std::ifstream data("C:\\Users\\anton\\OneDrive\\Skrivbord\\Thesis_Code\\IsolationForestTinyML\\DatSets\\mnist.csv");
+    std::ifstream data("C:\\Users\\anton\\OneDrive\\Skrivbord\\Thesis_Code\\IsolationForestTinyML\\DatSets\\wbc.csv");
     std::string line;
     while(std::getline(data,line))
     {
@@ -199,7 +199,7 @@ std::vector<float> decision_function(const std::vector<vector<Node>> & forest, c
     Mondrian implementation
 */
 //Algorithm 2
-void SampleMondrianBlock(std::vector<Node> & Tree, Node & j, int height, int height_limit)
+void IsolationTree(std::vector<Node> & Tree, Node & j, int height, int height_limit)
 {
     node_ammount++;
     j.size = j.data.size();
@@ -265,7 +265,7 @@ void SampleMondrianBlock(std::vector<Node> & Tree, Node & j, int height, int hei
         left_child.parent_id = j.id;
         Tree[left_child.parent_id].child_left_id = left_child.id;
 
-        SampleMondrianBlock(Tree, left_child, height + 1, height_limit);
+        IsolationTree(Tree, left_child, height + 1, height_limit);
         std::vector<std::vector<float>>().swap(left_child.data);
 
         //Line10
@@ -278,7 +278,7 @@ void SampleMondrianBlock(std::vector<Node> & Tree, Node & j, int height, int hei
         right_child.parent_id = j.id;
         Tree[right_child.parent_id].child_right_id = right_child.id;
 
-        SampleMondrianBlock(Tree, right_child, height + 1, height_limit);
+        IsolationTree(Tree, right_child, height + 1, height_limit);
         std::vector<std::vector<float>>().swap(right_child.data);
 
     }
@@ -294,7 +294,7 @@ void SampleMondrianBlock(std::vector<Node> & Tree, Node & j, int height, int hei
 }
 
 //Algorithm 1
-void SampleMondrianTree(std::vector<Node> & tree, std::vector<std::vector<float>> data)
+void IsolationForest(std::vector<Node> & tree, std::vector<std::vector<float>> data)
 {
     if (data.size() > SAMPLE_SIZE)
     {
@@ -306,7 +306,7 @@ void SampleMondrianTree(std::vector<Node> & tree, std::vector<std::vector<float>
     root.id = node_counter;
     root.data = data;
     data_dim = data[0].size();
-    SampleMondrianBlock(tree, root, 0, 8);
+    IsolationTree(tree, root, 0, 8);
 }
 
 int main() 
@@ -324,7 +324,7 @@ int main()
         for (size_t i = 0; i < NUMBER_OF_TREES; i++)
         {   
             Forest.emplace_back();
-            SampleMondrianTree(Forest[i], parsedCsv);
+            IsolationForest(Forest[i], parsedCsv);
         }
 
         std::cout << 2 << std::endl;

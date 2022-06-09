@@ -27,7 +27,7 @@ std::vector<std::vector<Node>> Forest;
 short int node_counter;
 unsigned char data_dim;
 const int SAMPLE_SIZE = 256;
-unsigned char NUMBER_OF_TREES = 100;
+unsigned char NUMBER_OF_TREES = 25;
 unsigned short int node_ammount = 0;
 //File myFile;
 
@@ -38,7 +38,6 @@ void setup()
   Serial.println("Initializing SD card...");
   Forest.reserve(5);
   //Tree.reserve(300);
-  randomSeed(300);
   /*if (!SD.begin(10))
     {
     }
@@ -155,7 +154,67 @@ float get_split(const std::vector<std::vector<float>> & data, int q_value)
   return split_value;
 }
 
-void SampleMondrianBlock(std::vector<Node> & Tree, Node & j, char height, char height_limit)
+std::vector<float> path_length(const std::vector<vector<Node>> & forest, const std::vector<std::vector<float>> & data)
+{
+  std::vector<float> edges;
+  for (size_t i = 0; i < data.size(); i++)
+  {
+    float avg = 0;
+    float avg_depth = 0;
+    for (size_t j = 0; j < forest.size(); j++)
+    {
+      std::vector<Node> tree = forest[j];
+      int current_node_pos = 0;
+      char length = 0;
+
+      while (length == 0 || !tree[current_node_pos].leaf)
+      {
+        float splitValue_attribute = data[i][tree[current_node_pos].split_feature_node];
+        float splitValue_node = tree[current_node_pos].split_val_node;
+        if (splitValue_attribute < splitValue_node)
+        {
+          current_node_pos = find_node_pos(tree, tree[current_node_pos], true);
+          length += 1;
+        }
+        else
+        {
+          current_node_pos = find_node_pos(tree, tree[current_node_pos], false);
+          length += 1;
+        }
+      }
+
+      float leaf_size = tree[current_node_pos].size;
+      float path_length = length + c(leaf_size);
+
+      avg += path_length;
+    }
+
+    float average_path = avg / forest.size();
+    edges.emplace_back(average_path);
+  }
+  return edges;
+}
+
+std::vector<float> decision_function(const std::vector<vector<Node>> & forest, const std::vector<std::vector<float>> & data)
+{
+  std::vector<float> scores;
+  float score = 0;
+  std::vector<float> average_length = path_length(forest, data);
+  for (size_t i = 0; i < data.size(); i++)
+  {
+    if (data.size() <= SAMPLE_SIZE)
+    {
+      scores.emplace_back(0.5 - pow(2, (-1 * average_length[i]) / c(data.size())));
+    }
+    else
+    {
+      scores.emplace_back(0.5 - pow(2, (-1 * average_length[i]) / c(SAMPLE_SIZE)));
+    }
+  }
+  return scores;
+}
+
+void IsolationTree(std::vector<Node> & Tree, Node & j, char height, char height_limit)
 {
   node_ammount++;
   j.size = j.data.size();
@@ -215,7 +274,7 @@ void SampleMondrianBlock(std::vector<Node> & Tree, Node & j, char height, char h
     left_child.parent_id = j.id;
     Tree[left_child.parent_id].child_left_id = left_child.id;
 
-    SampleMondrianBlock(Tree, left_child, height + 1, height_limit);
+    IsolationTree(Tree, left_child, height + 1, height_limit);
     std::vector<std::vector<float>>().swap(left_child.data);
 
     //Line10
@@ -228,7 +287,7 @@ void SampleMondrianBlock(std::vector<Node> & Tree, Node & j, char height, char h
     right_child.parent_id = j.id;
     Tree[right_child.parent_id].child_right_id = right_child.id;
 
-    SampleMondrianBlock(Tree, right_child, height + 1, height_limit);
+    IsolationTree(Tree, right_child, height + 1, height_limit);
     std::vector<std::vector<float>>().swap(right_child.data);
 
   }
@@ -245,7 +304,7 @@ void SampleMondrianBlock(std::vector<Node> & Tree, Node & j, char height, char h
 }
 
 //Algorithm 1
-void SampleMondrianTree(std::vector<Node> & tree, std::vector<std::vector<float>> & data)
+void IsolationForest(std::vector<Node> & tree, std::vector<std::vector<float>> & data)
 {
   if (data.size() > SAMPLE_SIZE)
   {
@@ -257,7 +316,7 @@ void SampleMondrianTree(std::vector<Node> & tree, std::vector<std::vector<float>
   root.id = node_counter;
   root.data = data;
   data_dim = data[0].size();
-  SampleMondrianBlock(tree, root, 0, 8);
+  IsolationTree(tree, root, 0, 8);
 }
 
 void loop() {
@@ -396,34 +455,21 @@ void loop() {
 
   for (size_t i = 0; i < NUMBER_OF_TREES; i++)
   {
+    randomSeed((i+3)*7);
     Forest.emplace_back();
     Serial.println(i);
-    SampleMondrianTree(Forest[i], parsedCsv);
-    Serial.print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@:  ");
+    IsolationForest(Forest[i], parsedCsv);
+    Serial.print("Tree number  ");
     Serial.println(i);
-
   }
 
-  Serial.println("Tree Built");
+  std::vector<float> anomalyScores = decision_function(Forest, parsedCsv);
 
-  for (size_t j = 0; j < Forest.size(); j++)
+  for (size_t i = 0; i < anomalyScores.size(); i++)
   {
-    std::vector<Node> & Tree = Forest[j];
-    for (size_t i = 0; i < Tree.size(); i++)
-    {
-
-      Serial.print("Node id: ");
-      Serial.println(Tree[i].id);
-      Serial.print(" Left child id: ");
-      Serial.println(Tree[i].child_left_id);
-      Serial.print(" Right child id: ");
-      Serial.println(Tree[i].child_right_id);
-      Serial.print(" Leaf: ");
-      Serial.println(Tree[i].leaf);
-      Serial.print(" Data size ");
-      Serial.println(Tree[i].data.size());
-    }
+    Serial.println(anomalyScores[i], 17);
   }
+
   while (1)
   {
   }

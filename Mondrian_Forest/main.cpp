@@ -38,7 +38,7 @@ const float LIFE_TIME = 1;
 std::vector<std::vector<float>> parseCSV()
 {   
     std::vector<std::vector<float>> parsedCsv;
-    std::ifstream data("C:\\Users\\anton\\OneDrive\\Skrivbord\\Thesis_Code\\IsolationForestTinyML\\DatSets\\ionosphere.csv");
+    std::ifstream data("C:\\Users\\anton\\OneDrive\\Skrivbord\\Thesis_Code\\IsolationForestTinyML\\DatSets\\pima.csv");
     std::string line;
     while(std::getline(data,line))
     {
