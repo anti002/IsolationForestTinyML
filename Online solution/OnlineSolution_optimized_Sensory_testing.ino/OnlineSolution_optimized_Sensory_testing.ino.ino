@@ -31,8 +31,7 @@ unsigned char data_dim;
 const int SAMPLE_SIZE = 256;
 unsigned char NUMBER_OF_TREES = 25;
 unsigned short int node_ammount = 0;
-const unsigned char DATA_SET_SIZE = 500;
-//File myFile;
+const unsigned short int DATA_SET_SIZE = 3000;
 
 void setup()
 {
@@ -47,12 +46,6 @@ void setup()
     Serial.println("Failed to initialize IMU!");
     while (1);
   }
-  Serial.print("Magnetic field sample rate = ");
-  Serial.print(IMU.magneticFieldSampleRate());
-  Serial.println(" uT");
-  Serial.println();
-  Serial.println("Magnetic Field in uT");
-  Serial.println("X\tY\tZ");
 }
 
 
@@ -315,12 +308,13 @@ void loop() {
     if (IMU.magneticFieldAvailable())
     {
       IMU.readMagneticField(x, y, z);
-
+      Serial.print("data.push_back({");
       Serial.print(x);
-      Serial.print('\t');
+      Serial.print(',');
       Serial.print(y);
-      Serial.print('\t');
-      Serial.println(z);
+      Serial.print(',');
+      Serial.print(z);
+      Serial.println("});");
       sensoryData.push_back({x, y, z});
       dataGatherer++;
     }
