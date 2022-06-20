@@ -30,6 +30,7 @@ short int node_counter;
 unsigned char data_dim;
 const int SAMPLE_SIZE = 256;
 unsigned char NUMBER_OF_TREES = 1;
+unsigned char TREE_DEPTH = (int)ceil(log2(SAMPLE_SIZE)); //Doesn't have to be based on sample size
 unsigned short int node_ammount = 0;
 const unsigned short int DATA_SET_SIZE = 500;
 
@@ -295,7 +296,7 @@ void IsolationForest(std::vector<Node> & tree, std::vector<std::vector<float>> &
   root.id = node_counter;
   root.data = data;
   data_dim = data[0].size();
-  IsolationTree(tree, root, 0, 8);
+  IsolationTree(tree, root, 0, TREE_DEPTH);
 }
 
 void loop() {
@@ -343,13 +344,14 @@ void loop() {
     if (IMU.magneticFieldAvailable())
     {
       IMU.readMagneticField(x, y, z);
-      Serial.print("data.push_back({");
+      //In case user want's to save the data set by simply copy and pasting the output
+      /*Serial.print("data.push_back({");
       Serial.print(x);
       Serial.print(',');
       Serial.print(y);
       Serial.print(',');
       Serial.print(z);
-      Serial.println("});");
+      Serial.println("});");*/
       sensoryData.push_back({x, y, z});
       dataGatherer++;
     }
@@ -362,6 +364,7 @@ void loop() {
   {
     Serial.println(anomalyScores[i], 17);
   }
+  Serial.println("Scores printed");
 
   while (1)
   {

@@ -28,6 +28,7 @@ short int node_counter;
 unsigned char data_dim;
 const int SAMPLE_SIZE = 128;
 unsigned char NUMBER_OF_TREES = 1;
+unsigned char TREE_DEPTH = (int)ceil(log2(SAMPLE_SIZE)); //Doesn't have to be based on sample size
 unsigned short int node_ammount = 0;
 //File myFile;
 
@@ -322,7 +323,7 @@ void IsolationForest(std::vector<Node> & tree, std::vector<std::vector<float>> d
   root.id = node_counter;
   root.data = data;
   data_dim = data[0].size();
-  IsolationTree(tree, root, 0, (int)ceil(log2(SAMPLE_SIZE)));
+  IsolationTree(tree, root, 0, TREE_DEPTH);
 }
 
 void loop() {
@@ -1344,8 +1345,9 @@ void loop() {
   Serial.println(anomalyScores.size());
   for (size_t i = 0; i < anomalyScores.size(); i++)
   {
-    //Serial.println(anomalyScores[i], 17);
+    Serial.println(anomalyScores[i], 17);
   }
+  Serial.println("Scores printed");
   /*Serial.print("Time for all evaluation for ");
     Serial.print(NUMBER_OF_TREES);
     Serial.print(" trees: ");*/
