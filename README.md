@@ -6,7 +6,7 @@ Master's thesis project
 
 Basically all that is needed is to install the required packages and libraries that are needed to compile for the Arduino Nano BLE sense 33.
 
-However there will be a compile error regarding the defenition of the absolute value function. To fix this, simply go to the file that the output box says has the error, and comment out the defenition. The function is not used at all so there's no problem with this.
+However there will be a compile error regarding the defenition of the absolute value function. To fix this, simply go to the file that the output box says has the error, and comment out the defenition on row 60-63. The function is not used at all so there's no problem with this.
 
 The error and file path should look something like this:
 ```
