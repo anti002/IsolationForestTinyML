@@ -17,7 +17,7 @@ struct Node
   float u_d[13];
   bool leaf = false;
   float split_time, split_location;
-  unsigned char id, parent_id, child_left_id, child_right_id, split_dimension, size;
+  short int id, parent_id, child_left_id, child_right_id, split_dimension, size;
 };
 
 std::vector<std::vector<Node>> Forest;
